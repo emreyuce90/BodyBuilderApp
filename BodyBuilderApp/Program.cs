@@ -1,4 +1,6 @@
 
+using BodyBuilder.Infrastructure.Persistence.Extensions;
+
 namespace BodyBuilderApp {
     public class Program {
         public static void Main(string[] args) {
@@ -10,7 +12,7 @@ namespace BodyBuilderApp {
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddInfraDependencies();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
