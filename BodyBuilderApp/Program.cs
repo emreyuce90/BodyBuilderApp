@@ -1,4 +1,5 @@
 
+using BodyBuilder.Application.Extensions;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 
 namespace BodyBuilderApp {
@@ -13,6 +14,7 @@ namespace BodyBuilderApp {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddInfraDependencies();
+            builder.Services.AddApplicationDependencies();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

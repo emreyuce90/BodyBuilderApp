@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace BodyBuilder.Application.Interfaces {
     public interface IUserService {
-        List<UserDto> GetAllAsync(bool isTracking = true);
-        UserDto GetById(Guid id);
+        Task<List<UserDto>> GetAllAsync(bool isTracking = true);
+        Task<UserDto> GetById(Guid id);
         Task<UserDto> AddAsync(UserDto userDto);
         Task<UserDto> UpdateAsync(UserDto userDto);
-        Task<UserDto> DeleteAsync(Guid id);
-        Task<UserDto> DeleteAsync(UserDto userDto);
+        Task<bool> DeleteAsync(Guid id);
+
     }
 }

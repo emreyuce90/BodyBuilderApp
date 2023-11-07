@@ -1,5 +1,6 @@
 ﻿using BodyBuilder.Domain.Entities;
 using BodyBuilder.Domain.Interfaces;
+using BodyBuilder.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -14,9 +15,9 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Infrastructure.Persistence.Repositories {
     public class EfGenericRepository<T> : IGenericRepository<T> where T : BaseEntity, new() {
         //Context injection
-        private readonly DbContext _context;
+        private readonly BodyBuilderContext _context;
 
-        public EfGenericRepository(DbContext context) {
+        public EfGenericRepository(BodyBuilderContext context) {
             _context = context;
         }
 
