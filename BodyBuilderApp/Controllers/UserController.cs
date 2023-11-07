@@ -42,6 +42,13 @@ namespace BodyBuilderApp.Controllers
             var userDto = await _userService.AddAsync(userAddDto);
             return Ok(new Response<UserDto>(userDto));
         }
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByIdAsync(Guid id) {
+            var user = await _userService.GetById(id);
+            return Ok(new Response<UserDto>(user));
+        }
 
+        
     }
 }

@@ -16,6 +16,7 @@ namespace BodyBuilder.Application.Extensions {
         public static void AddApplicationDependencies(this IServiceCollection services) {
             services.AddScoped<IUserService,UserService>();
             services.AddAutoMapper(typeof(AutoMapperConfiguration));
+            services.AddScoped<IAuthService,AuthService>();
         }
     }
 }

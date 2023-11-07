@@ -36,7 +36,6 @@ namespace BodyBuilder.Application.ValidationRules.User {
                 .WithMessage("Telefon numarası alanı boş geçilemez");
 
             RuleFor(u => u.Gender)
-                .NotNull()
                 .NotEmpty()
                 .WithMessage("Cinsiyet alanı boş geçilemez");
 
