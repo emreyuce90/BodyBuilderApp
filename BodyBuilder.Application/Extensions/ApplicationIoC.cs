@@ -1,6 +1,7 @@
 ﻿using BodyBuilder.Application.Interfaces;
 using BodyBuilder.Application.Mappings;
 using BodyBuilder.Application.Services;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,8 @@
 
 using BodyBuilder.Application.Extensions;
+using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
+using FluentValidation;
 
 namespace BodyBuilderApp {
     public class Program {
@@ -8,6 +10,23 @@ namespace BodyBuilderApp {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            #region Validations Register 
+
+            builder.Services.AddValidatorsFromAssemblyContaining(typeof(UserAddDtoValidator));
+            var serviceDescriptors = builder.Services
+                .Where(descriptor => typeof(IValidator) != descriptor.ServiceType
+                       && typeof(IValidator).IsAssignableFrom(descriptor.ServiceType)
+                       && descriptor.ServiceType.IsInterface)
+                .ToList();
+
+            foreach (var descriptor in serviceDescriptors) {
+                builder.Services.Add(new ServiceDescriptor(
+                    typeof(IValidator),
+                    p => p.GetRequiredService(descriptor.ServiceType),
+                    descriptor.Lifetime));
+            }
+
+            #endregion Validations Register
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

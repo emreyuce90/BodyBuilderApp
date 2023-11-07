@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using BodyBuilder.Application.Dtos;
+using BodyBuilder.Application.Dtos.User;
 using BodyBuilder.Application.Interfaces;
 using BodyBuilder.Domain.Entities;
 using BodyBuilder.Domain.Interfaces;
+using BodyBuilder.Domain.Utilities;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyBuilder.Application.Services {
+namespace BodyBuilder.Application.Services
+{
     public class UserService : IUserService {
 
         private readonly IUserRepository _userRepository;
@@ -21,8 +24,26 @@ namespace BodyBuilder.Application.Services {
             _mapper = mapper;
         }
 
-        public async Task<UserDto> AddAsync(UserDto userDto) {
-           var user= await _userRepository.CreateAsync(_mapper.Map<User>(userDto));
+        public async Task<UserDto> AddAsync(UserAddDto userAddDto) {
+
+            //Password salt
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(userAddDto.Password, out passwordHash, out passwordSalt);
+            //user informations
+            User user = new() {
+                CreatedDate = DateTime.Now,
+                PhoneNumber= userAddDto.PhoneNumber,
+                Gender=userAddDto.Gender,
+                DateOfBirth=userAddDto.DateOfBirth,
+                Email = userAddDto.Email,
+                IsActive = true,
+                MailConfirm = false,
+                MailConfirmValue = Guid.NewGuid().ToString(),
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt
+            };
+
+            await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
             return _mapper.Map<UserDto>(user);
         }

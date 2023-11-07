@@ -4,18 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyBuilder.Domain.Entities {
-    public class User :BaseEntity{
+namespace BodyBuilder.Application.Dtos.User
+{
+    public class UserDto
+    {
+        public Guid Id { get; set; }
         public string Email { get; set; }
-        public byte[] PasswordSalt { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public bool MailConfirm { get; set; }
-        public string MailConfirmValue { get; set; }
-        public DateTime MailConfirmDate { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Gender { get; set; }
         public int RoleId { get; set; }
-
     }
 }
