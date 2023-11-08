@@ -64,6 +64,11 @@ namespace BodyBuilder.Application.Services
             return _mapper.Map<UserDto>(user);
         }
 
+        public async Task<UserDto> GetUserByEMail(string email) {
+           var user = await _userRepository.GetSingle(u=>u.Email == email);
+            return _mapper.Map<UserDto>(user);
+        }
+
         public async Task<UserDto> UpdateAsync(UserDto userDto) {
             var user = _userRepository.UpdateAsync(_mapper.Map<User>(userDto));
             await _userRepository.SaveAsync();

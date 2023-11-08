@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using BodyBuilder.Application.Dtos.User;
+using BodyBuilder.Domain.Entities;
 using BodyBuilderApp.Communication;
 
 namespace BodyBuilderApp.Mappings {
     public class AutoMapperConfiguration : Profile {
         public AutoMapperConfiguration() {
             CreateMap(typeof(Response<>), typeof(Response<>)).ConvertUsing(typeof(ResponseConverter<,>));
-             
             
         }
         private class ResponseConverter<T, K> : ITypeConverter<Response<T>, Response<K>> {

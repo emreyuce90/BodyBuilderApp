@@ -1,4 +1,5 @@
-﻿using BodyBuilder.Application.Dtos.User;
+﻿using AutoMapper;
+using BodyBuilder.Application.Dtos.User;
 using BodyBuilder.Application.Interfaces;
 using BodyBuilderApp.Communication;
 using BodyBuilderApp.Resources;
@@ -12,9 +13,12 @@ namespace BodyBuilderApp.Controllers
     [ApiController]
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService) {
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        public AuthController(IAuthService authService, IUserService userService, IMapper mapper) {
             _authService = authService;
+            _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -26,7 +30,16 @@ namespace BodyBuilderApp.Controllers
                 return BadRequest(new Response() { Message="Kullanıcı adı veya şifre hatalıdır",Success = false});
             }
             //JWT Create
-            return Ok();
+            var user = await _userService.GetUserByEMail(userLoginDto.EMail);
+            var token = _authService.CreateToken(user);
+            var userResource = new UserResource() {
+                Token=token,
+                Email=userLoginDto.EMail,
+                RefreshToken=null,
+                RoleId=user.RoleId,
+                Id=user.Id
+            };
+            return Ok(new Response<UserResource>(userResource));
         }
     }
 }

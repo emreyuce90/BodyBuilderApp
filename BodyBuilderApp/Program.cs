@@ -1,8 +1,10 @@
 
 using BodyBuilder.Application.Extensions;
+using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BodyBuilderApp {
     public class Program {
@@ -10,6 +12,14 @@ namespace BodyBuilderApp {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            #region Cors Policy
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy("AllowOrigin", builder => builder.WithOrigins("https://localhost:7031/"));
+            });
+            #endregion
+
             #region Validations Register 
 
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(UserAddDtoValidator));
@@ -28,6 +38,24 @@ namespace BodyBuilderApp {
 
             #endregion Validations Register
 
+            #region Jwt
+            var token = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
+
+                    ValidAudience = token.Audience,
+                    ValidIssuer = token.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(token.SecurityKey)
+                };
+            });
+
+            #endregion
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -41,8 +69,9 @@ namespace BodyBuilderApp {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors(builder => builder.WithOrigins("https://localhost:7031/").AllowAnyHeader());
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

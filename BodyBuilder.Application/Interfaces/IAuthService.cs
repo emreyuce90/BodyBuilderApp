@@ -1,4 +1,6 @@
-﻿using BodyBuilderApp.Resources;
+﻿using BodyBuilder.Application.Dtos.User;
+using BodyBuilder.Application.Utilities.JWT;
+using BodyBuilderApp.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +12,6 @@ namespace BodyBuilder.Application.Interfaces
     public interface IAuthService
     {
         Task<bool> VerifyUser(UserLoginDto userLoginDto);
+        AccessToken CreateToken(UserDto userDto);
     }
 }

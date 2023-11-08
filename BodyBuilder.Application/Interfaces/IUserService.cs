@@ -14,6 +14,7 @@ namespace BodyBuilder.Application.Interfaces
         Task<UserDto> AddAsync(UserAddDto userAddDto);
         Task<UserDto> UpdateAsync(UserDto userDto);
         Task<bool> DeleteAsync(Guid id);
+        Task<UserDto> GetUserByEMail(string email);
 
     }
 }

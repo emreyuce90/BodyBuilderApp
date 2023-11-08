@@ -14,6 +14,7 @@ namespace BodyBuilder.Application.Mappings
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<UserAddDto, User>().ReverseMap();
+
         }
     }
 }

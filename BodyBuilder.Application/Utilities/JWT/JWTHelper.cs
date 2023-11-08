@@ -16,10 +16,10 @@ namespace BodyBuilder.Application.Utilities.JWT {
         //appSettingsJson dosyasını okuyacağız ve buradaki değerleri kullanarak tokenımızı oluşturacağız
         public IConfiguration Configuration { get; }
         //appSettings.json daki verileri property olarak tokenOptions a set edip nesne olarak kullanacağız
-        private TokenOptions _tokenOptions;
+        private TokenOptions? _tokenOptions;
         //configden okuduğumuz değeri buraya atayacağız
         DateTime _accessTokenExpiration;
-        public JwtHelper(IConfiguration configuration) {
+        public JWTHelper(IConfiguration configuration) {
             Configuration = configuration;
             _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
         }

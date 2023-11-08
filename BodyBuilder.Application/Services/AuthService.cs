@@ -1,4 +1,7 @@
-﻿using BodyBuilder.Application.Interfaces;
+﻿using AutoMapper;
+using BodyBuilder.Application.Dtos.User;
+using BodyBuilder.Application.Interfaces;
+using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Domain.Entities;
 using BodyBuilder.Domain.Interfaces;
 using BodyBuilder.Domain.Utilities;
@@ -12,9 +15,18 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Application.Services {
     public class AuthService : IAuthService {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenHelper _tokenHelper;
+        private readonly IMapper _mapper;
 
-        public AuthService(IUserRepository userRepository) {
+        public AuthService(IUserRepository userRepository, ITokenHelper tokenHelper, IMapper mapper) {
             _userRepository = userRepository;
+            _tokenHelper = tokenHelper;
+            _mapper = mapper;
+        }
+
+        public AccessToken CreateToken(UserDto userDto) {
+            var accessToken = _tokenHelper.CreateToken(_mapper.Map<User>(userDto), null);
+            return accessToken;
         }
 
         public async Task<bool> VerifyUser(UserLoginDto userLoginDto) {
