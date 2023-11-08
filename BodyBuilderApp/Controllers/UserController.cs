@@ -2,6 +2,7 @@
 using BodyBuilder.Application.Interfaces;
 using BodyBuilderApp.Communication;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,12 @@ namespace BodyBuilderApp.Controllers
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> SaveAsync(UserAddDto userAddDto) {
+            //check email already exist
+            var user = await _userService.GetUserByEMail(userAddDto.Email);
+            if (user != null) {
+                return BadRequest(new Response() { Message="Bu mail adresi zaten veritabanımızda mevcuttur",Success=false});
+
+            }
             //validate user dto
             var validationResult = await _userValidator.ValidateAsync(userAddDto);
             if (!validationResult.IsValid) {
@@ -42,6 +49,7 @@ namespace BodyBuilderApp.Controllers
             var userDto = await _userService.AddAsync(userAddDto);
             return Ok(new Response<UserDto>(userDto));
         }
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync(Guid id) {

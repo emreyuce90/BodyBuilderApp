@@ -36,7 +36,7 @@ namespace BodyBuilderApp.Controllers
                 Token=token,
                 Email=userLoginDto.EMail,
                 RefreshToken=null,
-                RoleId=user.RoleId,
+                RoleName=user.RoleName,
                 Id=user.Id
             };
             return Ok(new Response<UserResource>(userResource));

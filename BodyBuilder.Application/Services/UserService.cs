@@ -32,15 +32,16 @@ namespace BodyBuilder.Application.Services
             //user informations
             User user = new() {
                 CreatedDate = DateTime.Now,
-                PhoneNumber= userAddDto.PhoneNumber,
-                Gender=userAddDto.Gender,
-                DateOfBirth=userAddDto.DateOfBirth,
+                PhoneNumber = userAddDto.PhoneNumber,
+                Gender = userAddDto.Gender,
+                DateOfBirth = userAddDto.DateOfBirth,
                 Email = userAddDto.Email,
                 IsActive = true,
                 MailConfirm = false,
                 MailConfirmValue = Guid.NewGuid().ToString(),
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
+                PasswordSalt = passwordSalt,
+                Role = new Role (){ RoleName="Admin"}
             };
 
             await _userRepository.CreateAsync(user);
@@ -65,8 +66,10 @@ namespace BodyBuilder.Application.Services
         }
 
         public async Task<UserDto> GetUserByEMail(string email) {
-           var user = await _userRepository.GetSingle(u=>u.Email == email);
-            return _mapper.Map<UserDto>(user);
+            var user = await _userRepository.Table.Include(r => r.Role).FirstOrDefaultAsync(u => u.Email == email);
+            var mappedValue = _mapper.Map<UserDto>(user);
+            mappedValue.RoleName = user.Role.RoleName;
+            return mappedValue;
         }
 
         public async Task<UserDto> UpdateAsync(UserDto userDto) {

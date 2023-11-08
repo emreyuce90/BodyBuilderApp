@@ -11,6 +11,6 @@ namespace BodyBuilder.Application.Dtos.User {
         public string Email { get; set; }
         public AccessToken Token { get; set; }
         public string RefreshToken { get; set; }
-        public int RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 }

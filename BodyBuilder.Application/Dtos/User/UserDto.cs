@@ -13,6 +13,6 @@ namespace BodyBuilder.Application.Dtos.User
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Gender { get; set; }
-        public int RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 }
