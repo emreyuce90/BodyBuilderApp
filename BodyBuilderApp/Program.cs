@@ -14,9 +14,13 @@ namespace BodyBuilderApp {
             // Add services to the container.
 
             #region Cors Policy
-            builder.Services.AddCors(opt =>
-            {
-                opt.AddPolicy("AllowOrigin", builder => builder.WithOrigins("https://localhost:7031/"));
+            builder.Services.AddCors(options => {
+                options.AddPolicy("ReactAppPolicy",
+                    builder => {
+                        builder.WithOrigins("http://localhost:3000") // React UI'nin adresi (örnek olarak)
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
             });
             #endregion
 
@@ -40,8 +44,7 @@ namespace BodyBuilderApp {
 
             #region Jwt
             var token = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
-            {
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {
                 opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -69,7 +72,7 @@ namespace BodyBuilderApp {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors(builder => builder.WithOrigins("https://localhost:7031/").AllowAnyHeader());
+            app.UseCors("ReactAppPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
