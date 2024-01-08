@@ -4,6 +4,7 @@ using BodyBuilder.Application.Interfaces;
 using BodyBuilder.Domain.Entities;
 using BodyBuilder.Domain.Interfaces;
 using BodyBuilder.Domain.Utilities;
+using BodyBuilderApp.Communication;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,8 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyBuilder.Application.Services
-{
+namespace BodyBuilder.Application.Services {
     public class UserService : IUserService {
 
         private readonly IUserRepository _userRepository;
@@ -24,7 +24,7 @@ namespace BodyBuilder.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<UserDto> AddAsync(UserAddDto userAddDto) {
+        public async Task<Response<UserDto>> AddAsync(UserAddDto userAddDto) {
 
             //Password salt
             byte[] passwordHash, passwordSalt;
@@ -41,12 +41,12 @@ namespace BodyBuilder.Application.Services
                 MailConfirmValue = Guid.NewGuid().ToString(),
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Role = new Role (){ RoleName="Admin"}
+                Role = new Role() { RoleName = "Admin" }
             };
 
             await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
-            return _mapper.Map<UserDto>(user);
+            return new Response<UserDto>(_mapper.Map<UserDto>(user));
         }
 
         public async Task<bool> DeleteAsync(Guid id) {
@@ -55,27 +55,31 @@ namespace BodyBuilder.Application.Services
             return deleted;
         }
 
-        public  async Task<List<UserDto>> GetAllAsync(bool isTracking = true) {
-            var users =await  _userRepository.GetAllAsync(isTracking).ToListAsync();
-            return  _mapper.Map<List<UserDto>>(users);
+        public async Task<Response<List<UserDto>>> GetAllAsync(bool isTracking = true) {
+            var users = await _userRepository.GetAllAsync(isTracking).ToListAsync();
+            return new Response<List<UserDto>>(_mapper.Map<List<UserDto>>(users));
         }
 
-        public async Task<UserDto> GetById(Guid id) {
+        public async Task<Response<UserDto>> GetById(Guid id) {
             var user = await _userRepository.GetById(id);
-            return _mapper.Map<UserDto>(user);
+            return new Response<UserDto>(_mapper.Map<UserDto>(user));
         }
 
         public async Task<UserDto> GetUserByEMail(string email) {
             var user = await _userRepository.Table.Include(r => r.Role).FirstOrDefaultAsync(u => u.Email == email);
-            var mappedValue = _mapper.Map<UserDto>(user);
-            mappedValue.RoleName = user.Role.RoleName;
-            return mappedValue;
+            if (user != null) {
+                var mappedValue = _mapper.Map<UserDto>(user);
+                mappedValue.RoleName = user.Role.RoleName;
+                return mappedValue;
+            }
+            return null;
+
         }
 
-        public async Task<UserDto> UpdateAsync(UserDto userDto) {
+        public async Task<Response<UserDto>> UpdateAsync(UserDto userDto) {
             var user = _userRepository.UpdateAsync(_mapper.Map<User>(userDto));
             await _userRepository.SaveAsync();
-            return _mapper.Map<UserDto>(user) ;
+            return new Response<UserDto>(_mapper.Map<UserDto>(user));
         }
     }
 }

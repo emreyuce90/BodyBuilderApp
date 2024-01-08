@@ -1,4 +1,5 @@
 ﻿using BodyBuilder.Application.Dtos.User;
+using BodyBuilderApp.Communication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Application.Interfaces
 {
     public interface IUserService {
-        Task<List<UserDto>> GetAllAsync(bool isTracking = true);
-        Task<UserDto> GetById(Guid id);
-        Task<UserDto> AddAsync(UserAddDto userAddDto);
-        Task<UserDto> UpdateAsync(UserDto userDto);
+        Task<Response<List<UserDto>>> GetAllAsync(bool isTracking = true);
+        Task<Response<UserDto>> GetById(Guid id);
+        Task<Response<UserDto>> AddAsync(UserAddDto userAddDto);
+        Task<Response<UserDto>> UpdateAsync(UserDto userDto);
         Task<bool> DeleteAsync(Guid id);
         Task<UserDto> GetUserByEMail(string email);
 

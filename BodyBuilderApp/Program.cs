@@ -5,6 +5,7 @@ using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 namespace BodyBuilderApp {
     public class Program {
@@ -62,7 +63,42 @@ namespace BodyBuilderApp {
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo {
+                    Version = "v1",
+                    Title = "BodyBuilder App Token Based Auth Project",
+                    Description = "BodyBuilder App Token Based Auth Project",
+                    TermsOfService = new Uri("https://www.linkedin.com/in/mreyuce/"),
+                    Contact = new OpenApiContact {
+                        Email = "emreyuce9039@gmail.com",
+                        Name = "Emre Yüce",
+                        Url = new Uri("https://www.linkedin.com/in/mreyuce/")
+                    },
+                    License = new OpenApiLicense { Name = "Emre Yüce Licence", Url = new Uri("https://www.linkedin.com/in/mreyuce/") }
+
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{    {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = JwtBearerDefaults.AuthenticationScheme
+                        }
+                    },
+                    new string[] {}
+                        }
+                    });
+            });
             builder.Services.AddInfraDependencies();
             builder.Services.AddApplicationDependencies();
             var app = builder.Build();

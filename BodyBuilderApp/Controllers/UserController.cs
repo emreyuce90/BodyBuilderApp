@@ -21,10 +21,11 @@ namespace BodyBuilderApp.Controllers
         }
 
         [HttpGet]
+
         [ProducesResponseType(typeof(Response<List<UserDto>>),StatusCodes.Status200OK)]
         public async Task<IActionResult> Get() {
 
-            return Ok(new Response<List<UserDto>>(await _userService.GetAllAsync(false)));
+            return Ok(await _userService.GetAllAsync(false));
         }
 
         [HttpPost]
@@ -47,14 +48,14 @@ namespace BodyBuilderApp.Controllers
                 return BadRequest(new Response(validationResult.Errors));
             }
             var userDto = await _userService.AddAsync(userAddDto);
-            return Ok(new Response<UserDto>(userDto));
+            return Ok(userDto);
         }
         [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync(Guid id) {
             var user = await _userService.GetById(id);
-            return Ok(new Response<UserDto>(user));
+            return Ok(user);
         }
 
         
