@@ -26,7 +26,7 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> Login(UserLoginDto userLoginDto) {
             var response = await _authService.VerifyUser(userLoginDto);
             if (!response.Success) {
-                return BadRequest(new Response() { Message = "Kullanıcı adı veya şifre hatalıdır", Success = false });
+                return BadRequest(response);
             }
             var token = await _authService.CreateToken(userLoginDto);
             
