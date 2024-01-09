@@ -3,6 +3,7 @@ using BodyBuilder.Application.Extensions;
 using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
+using BodyBuilderApp.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -92,6 +93,7 @@ namespace BodyBuilderApp {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.ConfigureExceptionHandler();
             app.UseCors("ReactAppPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
