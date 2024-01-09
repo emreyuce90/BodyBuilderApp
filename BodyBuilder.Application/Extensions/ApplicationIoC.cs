@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Application.Extensions {
     public static class ApplicationIoC {
         public static void AddApplicationDependencies(this IServiceCollection services) {
-            services.AddScoped<IUserService,UserService>();
             services.AddAutoMapper(typeof(AutoMapperConfiguration));
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<ITokenCreate, TokenCreate>();

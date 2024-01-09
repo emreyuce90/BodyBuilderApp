@@ -15,5 +15,6 @@ namespace BodyBuilder.Application.Interfaces
         Task<Response> VerifyUser(UserLoginDto userLoginDto);
         Task<Response> CreateToken(UserLoginDto userLoginDto);
         Task<Response> RegisterUser(UserAddDto userAddDto);
+        Task<Response> CreateTokenByRefreshToken(string refreshToken);
     }
 }

@@ -82,6 +82,28 @@ namespace BodyBuilder.Application.Services {
             return new Response("Kullanıcı silinmiş veya aktif değil");
         }
 
+        public async Task<Response> CreateTokenByRefreshToken(string refreshToken) {
+            var existRefreshToken = await _userRefreshToken.GetSingle(rt => rt.Code == refreshToken);
+
+            if (existRefreshToken == null) return new Response ("Refresh token bulunamadı");
+
+            var user = await _userRepository.GetById(existRefreshToken.UserId);
+            if (user == null) return new Response ("Kullanıcı  bulunamadı");
+
+            var accessToken = _tokenCreate.CreateToken(user);
+            existRefreshToken.Code = accessToken.RefreshToken;
+            existRefreshToken.Expiration = accessToken.RefreshTokenExpiration;
+            await _userRefreshToken.SaveAsync();
+
+            var userResource = new UserResource {
+                Email = user.Email,
+                Token = accessToken.Token,
+                RefreshToken=accessToken.RefreshToken,
+                Id=user.Id
+            };
+            return new Response<UserResource>(userResource);
+        }
+
         public async Task<Response> RegisterUser(UserAddDto userAddDto) {
             //check model validation
             var validationResult = await _userRegisterValidator.ValidateAsync(userAddDto);

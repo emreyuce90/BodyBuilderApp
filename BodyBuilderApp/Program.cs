@@ -87,13 +87,13 @@ namespace BodyBuilderApp {
             builder.Services.AddInfraDependencies();
             builder.Services.AddApplicationDependencies();
             var app = builder.Build();
+            app.ConfigureExceptionHandler();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.ConfigureExceptionHandler();
             app.UseCors("ReactAppPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();

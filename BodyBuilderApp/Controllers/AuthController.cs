@@ -12,11 +12,9 @@ namespace BodyBuilderApp.Controllers {
     [ApiController]
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public AuthController(IAuthService authService, IUserService userService, IMapper mapper) {
+        public AuthController(IAuthService authService, IMapper mapper) {
             _authService = authService;
-            _userService = userService;
             _mapper = mapper;
         }
 
@@ -40,6 +38,15 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> Register (UserAddDto userAddDto) {
             var userDto = await _authService.RegisterUser(userAddDto);
             return Ok(userDto);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(Response<UserResource>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateTokenByRefreshToken(string refreshToken) {
+            var response = await _authService.CreateTokenByRefreshToken(refreshToken);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
         }
     }
 }
