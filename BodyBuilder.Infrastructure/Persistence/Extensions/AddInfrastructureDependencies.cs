@@ -14,6 +14,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Extensions {
         public static void AddInfraDependencies(this IServiceCollection services) {
             services.AddDbContext<BodyBuilderContext>(opt => opt.UseSqlServer("Server=localhost;Database=bbdatabase;Integrated Security=True;TrustServerCertificate=True;"));
             services.AddScoped<IUserRepository, EfUserRepository>();
+            services.AddScoped<IUserRefreshToken, EfUserRefreshToken>();
         }
     }
 }

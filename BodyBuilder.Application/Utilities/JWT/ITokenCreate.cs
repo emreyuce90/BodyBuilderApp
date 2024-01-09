@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BodyBuilder.Application.Utilities.JWT {
-    public interface ITokenHelper {
-        AccessToken CreateToken(User user, List<OperationClaim> operationClaims);
+    public interface ITokenCreate {
+        AccessToken CreateToken(User user);
 
     }
 }

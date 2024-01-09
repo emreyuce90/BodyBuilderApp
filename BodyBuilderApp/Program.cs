@@ -5,7 +5,9 @@ using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace BodyBuilderApp {
     public class Program {
@@ -54,7 +56,7 @@ namespace BodyBuilderApp {
                     ValidAudience = token.Audience,
                     ValidIssuer = token.Issuer,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(token.SecurityKey)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token.SecurityKey))
                 };
             });
 

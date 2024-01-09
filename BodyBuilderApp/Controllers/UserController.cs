@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BodyBuilderApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase {
@@ -50,7 +51,6 @@ namespace BodyBuilderApp.Controllers
             var userDto = await _userService.AddAsync(userAddDto);
             return Ok(userDto);
         }
-        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync(Guid id) {
