@@ -24,31 +24,6 @@ namespace BodyBuilder.Application.Services {
             _mapper = mapper;
         }
 
-        public async Task<Response<UserDto>> AddAsync(UserAddDto userAddDto) {
-
-            //Password salt
-            byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(userAddDto.Password, out passwordHash, out passwordSalt);
-            //user informations
-            User user = new() {
-                CreatedDate = DateTime.Now,
-                PhoneNumber = userAddDto.PhoneNumber,
-                Gender = userAddDto.Gender,
-                DateOfBirth = userAddDto.DateOfBirth,
-                Email = userAddDto.Email,
-                IsActive = true,
-                MailConfirm = false,
-                MailConfirmValue = Guid.NewGuid().ToString(),
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                Role = new Role() { RoleName = "Admin" }
-            };
-
-            await _userRepository.CreateAsync(user);
-            await _userRepository.SaveAsync();
-            return new Response<UserDto>(_mapper.Map<UserDto>(user));
-        }
-
         public async Task<bool> DeleteAsync(Guid id) {
             bool deleted = await _userRepository.DeleteAsync(id);
             await _userRepository.DeleteAsync(id);

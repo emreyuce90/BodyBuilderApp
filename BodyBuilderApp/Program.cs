@@ -27,24 +27,6 @@ namespace BodyBuilderApp {
             });
             #endregion
 
-            #region Validations Register 
-
-            builder.Services.AddValidatorsFromAssemblyContaining(typeof(UserAddDtoValidator));
-            var serviceDescriptors = builder.Services
-                .Where(descriptor => typeof(IValidator) != descriptor.ServiceType
-                       && typeof(IValidator).IsAssignableFrom(descriptor.ServiceType)
-                       && descriptor.ServiceType.IsInterface)
-                .ToList();
-
-            foreach (var descriptor in serviceDescriptors) {
-                builder.Services.Add(new ServiceDescriptor(
-                    typeof(IValidator),
-                    p => p.GetRequiredService(descriptor.ServiceType),
-                    descriptor.Lifetime));
-            }
-
-            #endregion Validations Register
-
             #region Jwt
             var token = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => {

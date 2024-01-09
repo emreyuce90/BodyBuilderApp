@@ -22,13 +22,15 @@ namespace BodyBuilder.Application.Services {
         private readonly IUserRefreshToken _userRefreshToken;
         private readonly IMapper _mapper;
         private readonly IValidator<UserLoginDto> _validator;
+        private readonly IValidator<UserAddDto> _userRegisterValidator;
 
-        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator) {
+        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator) {
             _userRepository = userRepository;
             _tokenCreate = tokenCreate;
             _mapper = mapper;
             _userRefreshToken = userRefreshToken;
             _validator = validator;
+            _userRegisterValidator = userRegisterValidator;
         }
 
         public async Task<Response> CreateToken(UserLoginDto userLoginDto) {
@@ -42,7 +44,7 @@ namespace BodyBuilder.Application.Services {
                 return new Response() { Message = message, Success = false };
             }
             //check user existence
-            var user = await _userRepository.Table.Include(r=>r.Role).FirstOrDefaultAsync(u => u.Email == userLoginDto.EMail);
+            var user = await _userRepository.Table.Include(r=>r.Role).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
             if (user == null) return new Response("Böyle bir kullanıcı bulunamadı");
             //Eğer user var ise ve silinmemiş ise
             if (user != null && !user.IsDeleted) {
@@ -80,6 +82,45 @@ namespace BodyBuilder.Application.Services {
             return new Response("Kullanıcı silinmiş veya aktif değil");
         }
 
+        public async Task<Response> RegisterUser(UserAddDto userAddDto) {
+            //check model validation
+            var validationResult = await _userRegisterValidator.ValidateAsync(userAddDto);
+            if (!validationResult.IsValid) {
+                var message = string.Empty;
+                foreach (var item in validationResult.Errors) {
+                    message += item.ErrorMessage;
+                }
+                return new Response(message);
+            }
+
+            //check if user already exist
+            var dbuser = await _userRepository.Table.FirstOrDefaultAsync(u => u.Email == userAddDto.Email);
+            if (dbuser != null) return new Response("Kayıt olmaya çalıştığınız kullanıcı zaten mevcut, aynı kullanıcıyla en fazla bir hesap açabilirsiniz");
+
+            //Password salt
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(userAddDto.Password, out passwordHash, out passwordSalt);
+            //user informations
+            User user = new() {
+                CreatedDate = DateTime.Now,
+                PhoneNumber = userAddDto.PhoneNumber,
+                Gender = userAddDto.Gender,
+                DateOfBirth = userAddDto.DateOfBirth,
+                Email = userAddDto.Email,
+                IsActive = true,
+                MailConfirm = false,
+                MailConfirmValue = Guid.NewGuid().ToString(),
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Role = new Role() { RoleName = "Admin" }
+            };
+
+            await _userRepository.CreateAsync(user);
+            await _userRepository.SaveAsync();
+            return new Response<UserDto>(_mapper.Map<UserDto>(user));
+
+        }
+
         public async Task<Response> VerifyUser(UserLoginDto userLoginDto) {
             //check model validation
             var validationResult = await _validator.ValidateAsync(userLoginDto);
@@ -90,7 +131,7 @@ namespace BodyBuilder.Application.Services {
                 }
                 return new Response() { Message = message, Success = false };
             }
-            var user = await _userRepository.GetSingle(u => u.Email == userLoginDto.EMail);
+            var user = await _userRepository.GetSingle(u => u.Email == userLoginDto.Email);
             if (user == null) {
                 return new Response("Kullanıcı adı veya şifre hatalıdır");
             }
@@ -99,8 +140,6 @@ namespace BodyBuilder.Application.Services {
             
 
         }
-
-
 
     }
 

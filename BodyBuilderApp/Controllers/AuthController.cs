@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
 namespace BodyBuilderApp.Controllers {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
@@ -31,6 +31,15 @@ namespace BodyBuilderApp.Controllers {
             var token = await _authService.CreateToken(userLoginDto);
             
             return Ok(new Response<UserResource>(token));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(Response<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+
+        public async Task<IActionResult> Register (UserAddDto userAddDto) {
+            var userDto = await _authService.RegisterUser(userAddDto);
+            return Ok(userDto);
         }
     }
 }

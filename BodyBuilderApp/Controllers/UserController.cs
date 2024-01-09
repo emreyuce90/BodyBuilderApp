@@ -29,28 +29,7 @@ namespace BodyBuilderApp.Controllers
             return Ok(await _userService.GetAllAsync(false));
         }
 
-        [HttpPost]
-        [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-
-        public async Task<IActionResult> SaveAsync(UserAddDto userAddDto) {
-            //check email already exist
-            var user = await _userService.GetUserByEMail(userAddDto.Email);
-            if (user != null) {
-                return BadRequest(new Response() { Message="Bu mail adresi zaten veritabanımızda mevcuttur",Success=false});
-
-            }
-            //validate user dto
-            var validationResult = await _userValidator.ValidateAsync(userAddDto);
-            if (!validationResult.IsValid) {
-                foreach (var item in validationResult.Errors) {
-                    //_logger.LogError(item.ErrorMessage, item.ErrorCode);
-                }
-                return BadRequest(new Response(validationResult.Errors));
-            }
-            var userDto = await _userService.AddAsync(userAddDto);
-            return Ok(userDto);
-        }
+        
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Response<UserDto>),StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync(Guid id) {
