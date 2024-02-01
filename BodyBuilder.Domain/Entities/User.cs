@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace BodyBuilder.Domain.Entities {
     public class User :BaseEntity{
+
+        public User()
+        {
+            Roles= new List<Role>();
+        }
+
         public string Email { get; set; }
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }
@@ -15,7 +21,7 @@ namespace BodyBuilder.Domain.Entities {
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Gender { get; set; }
-        public Role Role { get; set; }
+        public List<Role> Roles { get; set; }
         public Guid RoleId { get; set; }
 
     }

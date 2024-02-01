@@ -21,7 +21,7 @@ namespace BodyBuilderApp {
             builder.Services.AddCors(options => {
                 options.AddPolicy("ReactAppPolicy",
                     builder => {
-                        builder.WithOrigins("http://localhost:3000") // React UI'nin adresi (örnek olarak)
+                        builder.WithOrigins("http://localhost:5173") // React UI'nin adresi (örnek olarak)
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });
@@ -35,6 +35,7 @@ namespace BodyBuilderApp {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = false,
+                    
 
                     ValidAudience = token.Audience,
                     ValidIssuer = token.Issuer,

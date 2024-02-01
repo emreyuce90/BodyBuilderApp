@@ -44,7 +44,12 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Roles");
                 });
@@ -104,9 +109,6 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
@@ -143,21 +145,20 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.ToTable("UserRefreshTokens");
                 });
 
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.User", b =>
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.Role", b =>
                 {
-                    b.HasOne("BodyBuilder.Domain.Entities.Role", "Role")
-                        .WithOne("User")
-                        .HasForeignKey("BodyBuilder.Domain.Entities.User", "RoleId")
+                    b.HasOne("BodyBuilder.Domain.Entities.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.Role", b =>
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.User", b =>
                 {
-                    b.Navigation("User")
-                        .IsRequired();
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

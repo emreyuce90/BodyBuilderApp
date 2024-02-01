@@ -44,7 +44,7 @@ namespace BodyBuilder.Application.Services {
                 return new Response() { Message = message, Success = false };
             }
             //check user existence
-            var user = await _userRepository.Table.Include(r=>r.Role).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            var user = await _userRepository.Table.Include(r=>r.Roles).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
             if (user == null) return new Response("Böyle bir kullanıcı bulunamadı");
             //Eğer user var ise ve silinmemiş ise
             if (user != null && !user.IsDeleted) {
@@ -68,7 +68,7 @@ namespace BodyBuilder.Application.Services {
                     Email=user.Email,
                     Id=user.Id,
                     RefreshToken = accessToken.RefreshToken,
-                    RoleName= user.Role.ToString(),
+                    RoleName= user.Roles.Select(r=>r.RoleName).ToList(),
                     Token=accessToken.Token,
                     
                 };
@@ -134,7 +134,7 @@ namespace BodyBuilder.Application.Services {
                 MailConfirmValue = Guid.NewGuid().ToString(),
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Role = new Role() { RoleName = "Admin" }
+                Roles = new List<Role>() { new Role() { RoleName = "Admin" } }
             };
 
             await _userRepository.CreateAsync(user);

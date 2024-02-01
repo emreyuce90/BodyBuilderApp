@@ -29,8 +29,14 @@ namespace BodyBuilder.Application.Utilities.JWT {
             var claims = new List<Claim>() {
             new Claim("Id", $"{user.Id}"),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, $"{user.Role} ")
+            
             };
+
+            //userRoles
+            foreach (var r in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role,r.RoleName));
+            }
 
             //token create
             JwtSecurityToken securityToken = new(
