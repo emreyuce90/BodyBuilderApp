@@ -9,19 +9,21 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace BodyBuilder.Application.Utilities.JWT {
     public class TokenCreate : ITokenCreate {
         private readonly IConfiguration _configuration;
-
-        public TokenCreate(IConfiguration configuration) {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public TokenCreate(IConfiguration configuration, IHttpContextAccessor httpContextAccessor) {
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public AccessToken CreateToken(User user) {
 
-            var tokenExpireDate = DateTime.Now.AddHours(Convert.ToInt32(_configuration["TokenOptions:AccessTokenExpiration"]));
-            var refreshTokenExpireDate = DateTime.Now.AddDays(Convert.ToInt32(_configuration["TokenOptions:ExpireRefresh"]));
+            var tokenExpireDate = DateTime.UtcNow.AddSeconds(Convert.ToInt32(_configuration["TokenOptions:AccessTokenExpiration"]));
+            var refreshTokenExpireDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["TokenOptions:ExpireRefresh"]));
             SymmetricSecurityKey symmetric = new(Encoding.UTF8.GetBytes(_configuration["TokenOptions:SecurityKey"]));
             SigningCredentials credentials = new SigningCredentials(symmetric, SecurityAlgorithms.HmacSha256);
 
@@ -43,7 +45,7 @@ namespace BodyBuilder.Application.Utilities.JWT {
                 issuer: _configuration["TokenOptions:Issuer"],
                 audience: _configuration["TokenOptions:Audience"],
                 expires: tokenExpireDate,
-                notBefore: DateTime.Now,
+                notBefore: DateTime.UtcNow,
                 signingCredentials: credentials,
                 claims: claims
 
@@ -53,9 +55,19 @@ namespace BodyBuilder.Application.Utilities.JWT {
             var accessToken = new AccessToken {
                 ExpirationDate = tokenExpireDate,
                 Token = tokenHandler.WriteToken(securityToken),
-                RefreshToken = CreateRefreshToken(),
+                // RefreshToken = CreateRefreshToken(),
                 RefreshTokenExpiration = refreshTokenExpireDate
             };
+            //refresh token oluştur
+            accessToken.RefreshToken = CreateRefreshToken();
+            //jwt üzerinde cookie oluştur
+            var response = _httpContextAccessor.HttpContext.Response;
+            response.Cookies.Append("refreshToken",accessToken.RefreshToken,new CookieOptions {
+                HttpOnly=true,
+                Secure=true,
+                SameSite = SameSiteMode.None
+            });
+
             return accessToken;
         }
 

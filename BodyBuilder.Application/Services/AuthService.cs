@@ -33,6 +33,14 @@ namespace BodyBuilder.Application.Services {
             _userRegisterValidator = userRegisterValidator;
         }
 
+        public async Task<Response> CleanRefreshToken(string refreshToken) {
+            var existRefreshToken = await _userRefreshToken.Table.FirstOrDefaultAsync(rt => rt.Code == refreshToken);
+            if (existRefreshToken == null) return new Response("Refresh token bulunamadı");
+            await _userRefreshToken.DeleteAsync(existRefreshToken.Id);
+            await _userRefreshToken.SaveAsync();
+            return new Response();
+        }
+
         public async Task<Response> CreateToken(UserLoginDto userLoginDto) {
             //check model validation
             var validationResult = await _validator.ValidateAsync(userLoginDto);
@@ -44,7 +52,7 @@ namespace BodyBuilder.Application.Services {
                 return new Response() { Message = message, Success = false };
             }
             //check user existence
-            var user = await _userRepository.Table.Include(r=>r.Roles).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            var user = await _userRepository.Table.Include(r => r.Roles).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
             if (user == null) return new Response("Böyle bir kullanıcı bulunamadı");
             //Eğer user var ise ve silinmemiş ise
             if (user != null && !user.IsDeleted) {
@@ -65,12 +73,11 @@ namespace BodyBuilder.Application.Services {
                 await _userRefreshToken.SaveAsync();
 
                 var userResource = new UserResource {
-                    Email=user.Email,
-                    Id=user.Id,
-                    RefreshToken = accessToken.RefreshToken,
-                    RoleName= user.Roles.Select(r=>r.RoleName).ToList(),
-                    Token=accessToken.Token,
-                    
+                    Email = user.Email,
+                    Id = user.Id,
+                    RoleName = user.Roles.Select(r => r.RoleName).ToList(),
+                    Token = accessToken.Token,
+
                 };
                 return new Response {
                     Success = true,
@@ -83,12 +90,17 @@ namespace BodyBuilder.Application.Services {
         }
 
         public async Task<Response> CreateTokenByRefreshToken(string refreshToken) {
+            //refresh token var mı ,ve süresi geçmiş mi
+
+            //5.02.2024 21:46:07.3196964 datetime
+            //3.02.2024 21:46:07.3196964 refresh
+
             var existRefreshToken = await _userRefreshToken.GetSingle(rt => rt.Code == refreshToken);
+            if (existRefreshToken?.Expiration.Date <= DateTime.Now.Date) return new Response("Refresh token süresi bitmiş");
+            if (existRefreshToken == null) return new Response("Refresh token bulunamadı");
 
-            if (existRefreshToken == null) return new Response ("Refresh token bulunamadı");
-
-            var user = await _userRepository.GetById(existRefreshToken.UserId);
-            if (user == null) return new Response ("Kullanıcı  bulunamadı");
+            var user = await _userRepository.Table.Include(u => u.Roles).FirstOrDefaultAsync(x => x.Id == existRefreshToken.UserId);
+            if (user == null) return new Response("Kullanıcı  bulunamadı");
 
             var accessToken = _tokenCreate.CreateToken(user);
             existRefreshToken.Code = accessToken.RefreshToken;
@@ -98,8 +110,8 @@ namespace BodyBuilder.Application.Services {
             var userResource = new UserResource {
                 Email = user.Email,
                 Token = accessToken.Token,
-                RefreshToken=accessToken.RefreshToken,
-                Id=user.Id
+                Id = user.Id,
+                RoleName = user.Roles.Select(r => r.RoleName).ToList()
             };
             return new Response<UserResource>(userResource);
         }
@@ -159,7 +171,7 @@ namespace BodyBuilder.Application.Services {
             }
             bool isTrue = HashingHelper.VerifyPasswordHash(userLoginDto.Password, user.PasswordHash, user.PasswordSalt);
             return isTrue ? new Response() : new Response("Kullanıcı adı veya şifre hatalıdır");
-            
+
 
         }
 

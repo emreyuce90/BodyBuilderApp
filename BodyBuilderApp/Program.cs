@@ -23,7 +23,8 @@ namespace BodyBuilderApp {
                     builder => {
                         builder.WithOrigins("http://localhost:5173") // React UI'nin adresi (örnek olarak)
                                .AllowAnyHeader()
-                               .AllowAnyMethod();
+                               .AllowAnyMethod()
+                                .AllowCredentials();
                     });
             });
             #endregion
@@ -34,9 +35,9 @@ namespace BodyBuilderApp {
                 opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = false,
-                    
+                    ValidateLifetime = true,
 
+                    ClockSkew = TimeSpan.Zero,
                     ValidAudience = token.Audience,
                     ValidIssuer = token.Issuer,
                     ValidateIssuerSigningKey = true,

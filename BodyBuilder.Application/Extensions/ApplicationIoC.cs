@@ -20,6 +20,8 @@ namespace BodyBuilder.Application.Extensions {
             services.AddAutoMapper(typeof(AutoMapperConfiguration));
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<ITokenCreate, TokenCreate>();
+            services.AddScoped<IUserService,UserService>();
+            services.AddHttpContextAccessor();
 
             #region Validations Register 
 

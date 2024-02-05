@@ -2,6 +2,7 @@
 using BodyBuilder.Application.Dtos.User;
 using BodyBuilder.Application.Interfaces;
 using BodyBuilderApp.Communication;
+using BodyBuilderApp.Models;
 using BodyBuilderApp.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,11 +41,28 @@ namespace BodyBuilderApp.Controllers {
             return Ok(userDto);
         }
 
-        [HttpPost]
+
+        [HttpGet]
         [ProducesResponseType(typeof(Response<UserResource>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateTokenByRefreshToken(string refreshToken) {
+        public async Task<IActionResult> CreateTokenByRefreshToken() {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken)) {
+                // refreshToken bulunamazsa veya boşsa, hata işlemleri yapabilirsiniz
+                return BadRequest("Invalid or missing refresh token.");
+            }
             var response = await _authService.CreateTokenByRefreshToken(refreshToken);
+            if (!response.Success) return BadRequest(response);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LogoutAsync() {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken)) {
+                return BadRequest("Invalid or missing refresh token.");
+            }
+            var response = await _authService.CleanRefreshToken(refreshToken);
             if (!response.Success) return BadRequest(response);
             return Ok(response);
         }
