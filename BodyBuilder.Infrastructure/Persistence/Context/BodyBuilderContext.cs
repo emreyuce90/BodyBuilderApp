@@ -15,5 +15,10 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+        public DbSet<BodyPart> BodyParts { get; set; }
+        public DbSet<Movement> Movements { get; set; }
+        public DbSet<Programme> Programmes { get; set; }
+        public DbSet<SubProgramme> SubProgrammes { get; set; }
+        public DbSet<SubProgrammeMovement> SubProgrammeMovements { get; set; }
     }
 }

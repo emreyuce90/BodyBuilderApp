@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Domain.Entities {
     public class User :BaseEntity{
 
-        public User()
-        {
-            Roles= new List<Role>();
-        }
-
         public string Email { get; set; }
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }
