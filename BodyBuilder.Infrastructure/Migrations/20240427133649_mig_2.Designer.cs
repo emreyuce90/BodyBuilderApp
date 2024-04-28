@@ -4,6 +4,7 @@ using BodyBuilder.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BodyBuilder.Infrastructure.Migrations
 {
     [DbContext(typeof(BodyBuilderContext))]
-    partial class BodyBuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20240427133649_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,12 +215,6 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.Property<Guid>("MovementId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("SubProgrammeId")
                         .HasColumnType("uniqueidentifier");

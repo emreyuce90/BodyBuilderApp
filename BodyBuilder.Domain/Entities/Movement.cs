@@ -16,6 +16,6 @@ namespace BodyBuilder.Domain.Entities {
         public  string ImageUrl { get; set; }
         public string VideoUrl { get; set; }
         public Guid BodyPartId { get; set; }
-        public List<SubProgrammeMovement> SubProgrammeMovements { get; set; }
+        //public List<SubProgrammeMovement> SubProgrammeMovements { get; set; }
     }
 }

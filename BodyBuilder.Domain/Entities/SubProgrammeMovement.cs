@@ -8,5 +8,7 @@ namespace BodyBuilder.Domain.Entities {
     public class SubProgrammeMovement :BaseEntity{
         public Guid MovementId { get; set; }
         public Guid SubProgrammeId { get; set; }
+        public int Reps { get; set; }
+        public int Sets { get; set; }
     }
 }
