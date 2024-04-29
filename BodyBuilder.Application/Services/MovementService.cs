@@ -81,15 +81,20 @@ namespace BodyBuilder.Application.Services {
                 }
 
                 //check Id exist
-                var bodyPart = await _movementRepository.GetById(movementUpdateDto.Id);
-                if (bodyPart == null) {
+                var movementdb = await _movementRepository.GetById(movementUpdateDto.Id);
+                if (movementdb == null) {
                     return new Response() { Success = false, Message = "Böyle bir Id ye ait kayıt bulunamadı" };
                 }
 
                 //update data
-                var updatedData = _movementRepository.UpdateAsync(_mapper.Map<Movement>(movementUpdateDto));
+                movementdb.UpdatedDate = DateTime.Now;
+                movementdb.Description = movementUpdateDto.Description;
+                movementdb.ImageUrl = movementUpdateDto.ImageUrl;
+                movementdb.Tip = movementUpdateDto.Tip;
+                movementdb.Title = movementUpdateDto.Title;
+                var updatedData = _movementRepository.UpdateAsync(movementdb);
                 await _movementRepository.SaveAsync();
-                return new Response<BodyPartDto>(_mapper.Map<BodyPartDto>(updatedData));
+                return new Response<MovementDto>(_mapper.Map<MovementDto>(updatedData));
 
             } catch (Exception ex) {
                 return new Response(ex);

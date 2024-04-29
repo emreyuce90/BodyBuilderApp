@@ -37,6 +37,12 @@ namespace BodyBuilderApp.Controllers {
             return Ok(await _movementService.AddAsync(movementAddDto));
         }
 
+        [HttpPut]
+        [ProducesResponseType(typeof(Response<MovementDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddMovement([FromBody] MovementUpdateDto movementUpdateDto) {
 
+            return Ok(await _movementService.UpdateAsync(movementUpdateDto));
+        }
     }
 }
