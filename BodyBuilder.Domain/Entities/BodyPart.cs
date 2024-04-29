@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Domain.Entities {
     public class BodyPart : BaseEntity {
         [StringLength(100, ErrorMessage = "100 karakterden fazla olamaz")]
-        public required string Name{ get; set; }
+        public  string Name{ get; set; }
         public virtual List<Movement> Movements { get; set; }
     }
 }

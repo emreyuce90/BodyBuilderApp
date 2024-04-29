@@ -21,6 +21,8 @@ namespace BodyBuilder.Application.Extensions {
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<ITokenCreate, TokenCreate>();
             services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IMovementService,MovementService>();
+            services.AddScoped<IBodyPartService,BodyPartService>();
             services.AddHttpContextAccessor();
 
             #region Validations Register 

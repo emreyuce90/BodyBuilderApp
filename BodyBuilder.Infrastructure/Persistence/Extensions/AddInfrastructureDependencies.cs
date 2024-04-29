@@ -15,6 +15,11 @@ namespace BodyBuilder.Infrastructure.Persistence.Extensions {
             services.AddDbContext<BodyBuilderContext>(opt => opt.UseSqlServer("Server=localhost;Database=bbdatabase;Integrated Security=True;TrustServerCertificate=True;"));
             services.AddScoped<IUserRepository, EfUserRepository>();
             services.AddScoped<IUserRefreshToken, EfUserRefreshToken>();
+            services.AddScoped<IBodyPartRepository, EfBodyPartRepository>();
+            services.AddScoped<IMovementRepository, EfMovementRepository>();
+            services.AddScoped<ISubProgrammeMovementRepository, EfSubProgrammeMovementRepository>();
+            services.AddScoped<ISubProgrammeRepository, EfSubProgrammeRepository>();
+            services.AddScoped<IProgrammeRepository, EfProgrammeRepository>();
         }
     }
 }

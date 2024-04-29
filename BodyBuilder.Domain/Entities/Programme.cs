@@ -9,7 +9,7 @@ namespace BodyBuilder.Domain.Entities {
     public class Programme :BaseEntity{
 
         [StringLength(100, ErrorMessage = "Title alanı 100 karakterden fazla olamaz")]  
-        public required string Name { get; set; }
+        public  string Name { get; set; }
         public Guid UserId { get; set; }
         public virtual List<SubProgramme> SubProgrammes { get; set; }
     }

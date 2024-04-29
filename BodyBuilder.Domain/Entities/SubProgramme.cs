@@ -11,8 +11,8 @@ namespace BodyBuilder.Domain.Entities {
         public Guid ProgrammeId { get; set; }
         [StringLength(100, ErrorMessage = "Title alanı 100 karakterden fazla olamaz")]
 
-        public required string Name { get; set; }
-        //public virtual List<SubProgrammeMovement> SubProgrammeMovements{ get; set; }
+        public  string Name { get; set; }
+        public virtual List<SubProgrammeMovement> SubProgrammeMovements{ get; set; }
         //[Range(0,int.MaxValue)]
         //public int Sets { get; set; }
         //[Range(0, int.MaxValue)]
