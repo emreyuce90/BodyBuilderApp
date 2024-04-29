@@ -2,10 +2,12 @@
 using BodyBuilder.Application.Extensions;
 using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Application.ValidationRules.User;
+using BodyBuilder.Infrastructure.Persistence.Context;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using BodyBuilderApp.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -47,6 +49,13 @@ namespace BodyBuilderApp {
 
             #endregion
 
+            //appsettings.json dosyas?n?n yap?land?rmas?n? yükler
+            var configuration = builder.Configuration;
+            //dependency injection için ba??ml?l??? yükler
+            builder.Services.AddSingleton<IConfiguration>(configuration);
+
+            builder.Services.AddDbContext<BodyBuilderContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("remoteDb")));
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

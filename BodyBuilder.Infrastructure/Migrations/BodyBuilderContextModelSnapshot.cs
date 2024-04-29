@@ -227,6 +227,10 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MovementId");
+
+                    b.HasIndex("SubProgrammeId");
+
                     b.ToTable("SubProgrammeMovements");
                 });
 
@@ -350,14 +354,39 @@ namespace BodyBuilder.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgrammeMovement", b =>
+                {
+                    b.HasOne("BodyBuilder.Domain.Entities.Movement", null)
+                        .WithMany("SubProgrammeMovements")
+                        .HasForeignKey("MovementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BodyBuilder.Domain.Entities.SubProgramme", null)
+                        .WithMany("SubProgrammeMovements")
+                        .HasForeignKey("SubProgrammeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyPart", b =>
                 {
                     b.Navigation("Movements");
                 });
 
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
+                {
+                    b.Navigation("SubProgrammeMovements");
+                });
+
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Programme", b =>
                 {
                     b.Navigation("SubProgrammes");
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgramme", b =>
+                {
+                    b.Navigation("SubProgrammeMovements");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.User", b =>
