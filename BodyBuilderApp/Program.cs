@@ -23,13 +23,14 @@ namespace BodyBuilderApp {
             builder.Services.AddCors(options => {
                 options.AddPolicy("ReactAppPolicy",
                     builder => {
-                        builder.WithOrigins("http://localhost:5173") // React UI'nin adresi (örnek olarak)
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                                .AllowCredentials();
+                        builder.WithOrigins("http://localhost:8081","http://192.168.1.93:8081")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod()
+                        .AllowCredentials();
                     });
             });
             #endregion
+
 
             #region Jwt
             var token = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
@@ -98,6 +99,7 @@ namespace BodyBuilderApp {
             builder.Services.AddInfraDependencies();
             builder.Services.AddApplicationDependencies();
             var app = builder.Build();
+            app.UseCors("ReactAppPolicy");
             app.ConfigureExceptionHandler();
 
             // Configure the HTTP request pipeline.
@@ -105,7 +107,6 @@ namespace BodyBuilderApp {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors("ReactAppPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
 

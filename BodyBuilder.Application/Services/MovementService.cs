@@ -87,6 +87,7 @@ namespace BodyBuilder.Application.Services {
                 }
 
                 //update data
+                movementdb.VideoUrl = movementUpdateDto.VideoUrl;
                 movementdb.UpdatedDate = DateTime.Now;
                 movementdb.Description = movementUpdateDto.Description;
                 movementdb.ImageUrl = movementUpdateDto.ImageUrl;
