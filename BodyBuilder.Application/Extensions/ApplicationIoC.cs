@@ -17,12 +17,14 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Application.Extensions {
     public static class ApplicationIoC {
         public static void AddApplicationDependencies(this IServiceCollection services) {
+            services.AddScoped<ISubProgrammeService, SubProgrammeService>();
             services.AddAutoMapper(typeof(AutoMapperConfiguration));
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<ITokenCreate, TokenCreate>();
             services.AddScoped<IUserService,UserService>();
             services.AddScoped<IMovementService,MovementService>();
             services.AddScoped<IBodyPartService,BodyPartService>();
+            services.AddScoped<IProgrammeService,ProgrammeService>();
             services.AddHttpContextAccessor();
 
             #region Validations Register 
