@@ -17,5 +17,10 @@ namespace BodyBuilderApp.Controllers {
             
             return Ok(await _programmeService.GetAllAsync());
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAllByUserId(Guid id) {
+            return Ok(await _programmeService.GetByUserIdAsync(id));
+        }
     }
 }

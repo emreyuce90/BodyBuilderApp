@@ -41,8 +41,14 @@ namespace BodyBuilder.Application.Services {
             throw new NotImplementedException();
         }
 
-        public Task<Response> GetByUserIdAsync(Guid userId) {
-            throw new NotImplementedException();
+        public async Task<Response> GetByUserIdAsync(Guid userId) {
+            try {
+                var userProgrammes = await _programmeRepository.GetAllAsync(p => p.IsActive == true && p.IsDeleted == false && p.UserId == userId).ToListAsync();
+                return new Response(_mapper.Map<List<ProgrammeDto>>(userProgrammes));
+            } catch (Exception ex) {
+                return new Response(ex);
+                throw;
+            }
         }
     }
 }
