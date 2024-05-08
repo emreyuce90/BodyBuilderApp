@@ -13,9 +13,7 @@ namespace BodyBuilder.Domain.Entities {
 
         public  string Name { get; set; }
         public virtual List<SubProgrammeMovement> SubProgrammeMovements{ get; set; }
-        //[Range(0,int.MaxValue)]
-        //public int Sets { get; set; }
-        //[Range(0, int.MaxValue)]
-        //public int Reps { get; set; }
+        public virtual List<Workout> Workouts { get; set; }
+   
     }
 }

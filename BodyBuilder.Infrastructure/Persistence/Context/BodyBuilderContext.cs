@@ -20,5 +20,8 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<Programme> Programmes { get; set; }
         public DbSet<SubProgramme> SubProgrammes { get; set; }
         public DbSet<SubProgrammeMovement> SubProgrammeMovements { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
+        public DbSet<WorkoutMovement> WorkoutMovements { get; set; }
+        public DbSet<WorkoutMovementSet> WorkoutMovementSets { get; set; }
     }
 }

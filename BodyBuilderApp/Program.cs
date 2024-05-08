@@ -1,4 +1,4 @@
-
+﻿
 using BodyBuilder.Application.Extensions;
 using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Application.ValidationRules.User;
@@ -8,6 +8,7 @@ using BodyBuilderApp.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -50,9 +51,9 @@ namespace BodyBuilderApp {
 
             #endregion
 
-            //appsettings.json dosyas?n?n yap?land?rmas?n? y�kler
+            //appsettings.json dosyas?n?n yap?land?rmas?n? yükler
             var configuration = builder.Configuration;
-            //dependency injection i�in ba??ml?l??? y�kler
+            //dependency injection için ba??ml?l??? yükler
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             builder.Services.AddDbContext<BodyBuilderContext>(options =>
@@ -71,10 +72,10 @@ namespace BodyBuilderApp {
                     TermsOfService = new Uri("https://www.linkedin.com/in/mreyuce/"),
                     Contact = new OpenApiContact {
                         Email = "emreyuce9039@gmail.com",
-                        Name = "Emre Y�ce",
+                        Name = "Emre Yüce",
                         Url = new Uri("https://www.linkedin.com/in/mreyuce/")
                     },
-                    License = new OpenApiLicense { Name = "Emre Y�ce Licence", Url = new Uri("https://www.linkedin.com/in/mreyuce/") }
+                    License = new OpenApiLicense { Name = "Emre Yüce Licence", Url = new Uri("https://www.linkedin.com/in/mreyuce/") }
 
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
@@ -104,11 +105,25 @@ namespace BodyBuilderApp {
             var app = builder.Build();
             app.UseCors("ReactAppPolicy");
             app.ConfigureExceptionHandler();
+            app.UseStaticFiles(new StaticFileOptions {
+                FileProvider = new PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "wwwroot")),
+                RequestPath = "/api.gymguru.com.tr"
+            });
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            } else {
+                // Üretim ortamında da Swagger'i etkinleştirmek için bu kısmı kaldırın
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.RoutePrefix = string.Empty; // Ana sayfada Swagger UI'yı göstermek için
+                });
             }
             app.UseHttpsRedirection();
             app.UseAuthentication();
