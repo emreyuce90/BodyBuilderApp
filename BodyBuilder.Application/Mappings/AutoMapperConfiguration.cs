@@ -4,6 +4,7 @@ using BodyBuilder.Application.Dtos.Movement;
 using BodyBuilder.Application.Dtos.Programme;
 using BodyBuilder.Application.Dtos.SubProgramme;
 using BodyBuilder.Application.Dtos.User;
+using BodyBuilder.Application.Dtos.Workout;
 using BodyBuilder.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace BodyBuilder.Application.Mappings
     public class AutoMapperConfiguration :Profile{
         public AutoMapperConfiguration()
         {
+            CreateMap<WorkoutAddDto, Workout>().ReverseMap();
+            CreateMap<Workout, WorkoutDto>().ReverseMap();
             CreateMap<SubProgramme, SubProgrammeDto>().ReverseMap();
             CreateMap<ProgrammeAddDto, Programme>().ReverseMap();
             CreateMap<ProgrammeDto, Programme>().ReverseMap();

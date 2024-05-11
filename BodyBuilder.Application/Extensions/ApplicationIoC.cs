@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Application.Extensions {
     public static class ApplicationIoC {
         public static void AddApplicationDependencies(this IServiceCollection services) {
+            services.AddScoped<IWorkoutService, WorkoutService>();
             services.AddScoped<ISubProgrammeMovementService, SubProgrammeMovementService>();
             services.AddScoped<ISubProgrammeService, SubProgrammeService>();
             services.AddAutoMapper(typeof(AutoMapperConfiguration));

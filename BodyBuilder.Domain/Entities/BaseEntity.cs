@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Domain.Entities {
     public abstract class BaseEntity {
         public Guid Id { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool  IsActive { get; set; }
+        public DateTime CreatedDate { get; set; }= DateTime.Now;
+        public DateTime? UpdatedDate { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } =false;
+        public bool IsActive { get; set; } = true;
     }
 }
