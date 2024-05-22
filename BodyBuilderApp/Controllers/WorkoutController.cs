@@ -1,5 +1,8 @@
-﻿using BodyBuilder.Application.Dtos.Workout;
+﻿using BodyBuilder.Application.Dtos.Movement;
+using BodyBuilder.Application.Dtos.Workout;
+using BodyBuilder.Application.Dtos.WorkoutMovement;
 using BodyBuilder.Application.Interfaces;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +45,11 @@ namespace BodyBuilderApp.Controllers {
         [HttpGet("{subprogrammeid}")]
         public async Task<IActionResult> GetBySubprogrammeId(Guid subprogrammeid) {
             return Ok(await _workoutService.GetWorkoutBySubprogrammeIdAsync(subprogrammeid));
+        }
+
+        [HttpPost("{workoutId}")]
+        public async Task<IActionResult> SaveWorkoutMovements([FromRoute] Guid workoutId, [FromBody] List<WorkoutMovementAddDto> movementAddDto) {
+            return Ok(await _workoutService.CreateWorkoutMovement(workoutId, movementAddDto));
         }
     }
 }

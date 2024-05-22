@@ -1,4 +1,6 @@
-﻿using BodyBuilder.Application.Dtos.Workout;
+﻿using BodyBuilder.Application.Dtos.Movement;
+using BodyBuilder.Application.Dtos.Workout;
+using BodyBuilder.Application.Dtos.WorkoutMovement;
 using BodyBuilderApp.Communication;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ namespace BodyBuilder.Application.Interfaces {
         Task<Response> GetWorkoutByIdAsync(Guid workoutId);
         Task<Response> GetWorkoutByUserIdAsync(Guid userId);
         Task<Response> FinishWorkout(Guid workoutId,TimeSpan endTime);
+        Task<Response> CreateWorkoutMovement(Guid workoutId, List<WorkoutMovementAddDto> movementAddDto);
 
     }
 }
