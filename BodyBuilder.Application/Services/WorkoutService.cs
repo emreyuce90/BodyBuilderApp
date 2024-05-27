@@ -67,7 +67,7 @@ namespace BodyBuilder.Application.Services {
             return new Response();
         }
 
-        public async Task<Response> FinishWorkout(Guid workoutId, TimeSpan endTime) {
+        public async Task<Response> FinishWorkout(Guid workoutId, TimeSpan endTime,int duration) {
             try {
                 //find workout from db without tracking
                 var dbWorkout = await _workoutRepository.GetSingle(w => w.IsActive == true && w.IsDeleted == false && w.Id == workoutId, false);
@@ -75,6 +75,7 @@ namespace BodyBuilder.Application.Services {
                     return new Response() { Success = false, Message = "Veritabanında böyle bir kayıt bulunamadı" };
                 }
                 dbWorkout.EndTime = endTime;
+                dbWorkout.Duration = duration;
                 _workoutRepository.UpdateAsync(dbWorkout);
                 await _workoutRepository.SaveAsync();
                 return new Response() { Code = 200, Success = true };
@@ -161,6 +162,21 @@ namespace BodyBuilder.Application.Services {
             } catch (Exception ex) {
                 return new Response(ex.Message);
 
+                throw;
+            }
+        }
+
+        public async Task<Response> StopWorkout(Guid workoutId) {
+            try {
+                var workout = _workoutRepository.GetSingle(w => w.Id == workoutId && !w.IsDeleted && w.IsActive);
+                if (workout == null) {
+                    return new Response() { Code = 400, Message = "Bu workoutId ye ait veritabanı kaydı bulunamadı" };
+                }
+                await _workoutRepository.DeleteAsync(workoutId);
+                await _workoutRepository.SaveAsync();
+                return new Response(workout);
+            } catch (Exception ex) {
+                return new Response(ex);
                 throw;
             }
         }

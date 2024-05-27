@@ -25,10 +25,10 @@ namespace BodyBuilderApp.Controllers {
         }
 
         [HttpPut("{workoutId}")]
-        public async Task<IActionResult> FinishWorkout([FromRoute] Guid workoutId,string endTime) {
+        public async Task<IActionResult> FinishWorkout([FromRoute] Guid workoutId,string endTime,int duration) {
             TimeSpan _endTime;
             TimeSpan.TryParse(endTime, out _endTime);
-            return Ok(await _workoutService.FinishWorkout(workoutId, _endTime));
+            return Ok(await _workoutService.FinishWorkout(workoutId, _endTime,duration));
 
         }
 
@@ -50,6 +50,11 @@ namespace BodyBuilderApp.Controllers {
         [HttpPost("{workoutId}")]
         public async Task<IActionResult> SaveWorkoutMovements([FromRoute] Guid workoutId, [FromBody] List<WorkoutMovementAddDto> movementAddDto) {
             return Ok(await _workoutService.CreateWorkoutMovement(workoutId, movementAddDto));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWorkout([FromRoute] Guid id) {
+            return Ok(await _workoutService.StopWorkout(id));
         }
     }
 }

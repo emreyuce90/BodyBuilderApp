@@ -11,6 +11,7 @@ namespace BodyBuilder.Domain.Entities {
         public DateTime WorkoutDate { get;set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
+        public int Duration { get; set; }
         public SubProgramme SubProgramme { get; set; }
     }
 }
