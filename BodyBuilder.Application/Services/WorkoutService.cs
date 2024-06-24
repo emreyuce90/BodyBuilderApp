@@ -8,6 +8,7 @@ using BodyBuilder.Domain.Interfaces;
 using BodyBuilderApp.Communication;
 using BodyBuilderApp.Resources;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,9 @@ namespace BodyBuilder.Application.Services {
                     }
                     await _workoutMovementRepository.Table.AddRangeAsync(workoutMovementList);
                     await _workoutMovementRepository.SaveAsync();
-                    return new Response() { Code = 200, Message = "Workout başarıyla kaydedildi" };
+                    //kullanıcının antrenmanları geriye dönülür
+                    var workoutCount = await _workoutRepository.GetAllAsync(w => w.UserId.ToString() == "7aaf453f-56ea-4f7d-8877-4cec29072bfe" && !w.IsDeleted && w.IsActive,false).CountAsync(); ;
+                    return new Response() { Code = 200, Message = "Workout başarıyla kaydedildi" ,Resource=workoutCount };
                 } else {
                     return new Response() { Code = 400, Message = "Workout listesi boş!" };
 

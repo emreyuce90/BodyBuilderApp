@@ -11,6 +11,6 @@ namespace BodyBuilder.Domain.Entities {
         public int Reps { get; set; }
         public int Sets { get; set; }
 
-        public Movement Movement { get; set; }
+        public Movement? Movement { get; set; }
     }
 }

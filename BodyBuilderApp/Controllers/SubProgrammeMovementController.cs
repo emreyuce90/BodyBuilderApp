@@ -1,4 +1,5 @@
 ﻿using BodyBuilder.Application.Interfaces;
+using BodyBuilder.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,11 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> GetBySubProgrammeId(Guid id) {
             return Ok(await _subProgrammeMovementService.GetAllBySubProgrammeIdAsync(id));
 
+        }
+
+        [HttpPut("{subProgrammeId}")]
+        public async Task<IActionResult> UpdateSubProgrammeMovements([FromRoute]Guid subProgrammeId,[FromBody]List<SubProgrammeMovement> programmeMovements) {
+            return Ok(await _subProgrammeMovementService.UpdateSubProgrammeMovementByIdAsync(subProgrammeId, programmeMovements));
         }
     }
 }
