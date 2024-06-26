@@ -10,6 +10,7 @@ namespace BodyBuilder.Domain.Entities {
     public class BodyPart : BaseEntity {
         [StringLength(100, ErrorMessage = "100 karakterden fazla olamaz")]
         public  string Name{ get; set; }
+        public string PictureUrl { get; set; }
         public virtual List<Movement> Movements { get; set; }
     }
 }

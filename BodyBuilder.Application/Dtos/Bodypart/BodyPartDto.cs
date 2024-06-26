@@ -9,5 +9,6 @@ namespace BodyBuilder.Application.Dtos.Bodypart {
     public class BodyPartDto {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string PictureUrl { get; set; }
     }
 }

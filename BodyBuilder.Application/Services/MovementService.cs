@@ -69,6 +69,16 @@ namespace BodyBuilder.Application.Services {
             }
         }
 
+        public async Task<Response> GetMovementByBodypartId(Guid bodypartId) {
+            try {
+                var movement = await _movementRepository.GetAllAsync(m => m.IsActive == true && m.IsDeleted == false && m.BodyPartId == bodypartId).ToListAsync();
+                return new Response { Code = 200, Resource = _mapper.Map<List<MovementDto>>(movement), Success = true };
+            } catch (Exception ex) {
+                return new Response(ex);
+                throw;
+            }
+        }
+
         public async Task<Response> UpdateAsync(MovementUpdateDto movementUpdateDto) {
             try {
                 var validator = await _updatevalidator.ValidateAsync(movementUpdateDto);
