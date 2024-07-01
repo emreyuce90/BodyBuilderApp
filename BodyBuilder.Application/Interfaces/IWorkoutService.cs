@@ -18,6 +18,7 @@ namespace BodyBuilder.Application.Interfaces {
         Task<Response> FinishWorkout(Guid workoutId,TimeSpan endTime, int duration);
         Task<Response> CreateWorkoutMovement(Guid workoutId, List<WorkoutMovementAddDto> movementAddDto);
         Task<Response> StopWorkout(Guid workoutId);
+        Task<Response> GetWorkoutDetailByWorkoutIdAsync(Guid workoutId);
 
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BodyBuilderApp.Controllers {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class MovementsController : ControllerBase {
         private readonly IMovementService _movementService;
@@ -46,7 +46,7 @@ namespace BodyBuilderApp.Controllers {
         }
         
        
-        [HttpGet("{bodypartId}")]
+        [HttpGet("bodypart/{bodypartId}")]
         public async Task<IActionResult> GetMovementsByBodyPartId(Guid bodypartId) {
             return Ok(await _movementService.GetMovementByBodypartId(bodypartId));
         }

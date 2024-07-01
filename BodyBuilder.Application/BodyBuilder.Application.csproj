@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BodyBuilder.Domain\BodyBuilder.Domain.csproj" />
+    <ProjectReference Include="..\BodyBuilder.Infrastructure\BodyBuilder.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

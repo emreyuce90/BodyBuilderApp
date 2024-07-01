@@ -56,5 +56,10 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> DeleteWorkout([FromRoute] Guid id) {
             return Ok(await _workoutService.StopWorkout(id));
         }
+
+        [HttpGet("{workoutId}")]
+        public async Task<IActionResult> GetWorkoutLogDetailsByWorkoutIdAsync([FromRoute] Guid workoutId) {
+            return Ok(await _workoutService.GetWorkoutDetailByWorkoutIdAsync(workoutId));
+        }
     }
 }
