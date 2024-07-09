@@ -9,6 +9,7 @@ namespace BodyBuilder.Domain.Entities {
         public Guid BodyMetricsId { get; set; }
         public string MetricName { get; set; } = String.Empty;
         public float Value { get; set; }
+        public string Color { get; set; } = String.Empty;
 
     }
 }

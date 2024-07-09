@@ -11,7 +11,7 @@ namespace BodyBuilder.Domain.Entities {
         public DateTime MeasurementDate { get; set; }
         public float Value { get; set; }
 
-        public Guid BodyMetricsId { get; set; }
+        public Guid BodyMetricsId { get; set; } 
         public virtual BodyMetrics BodyMetrics { get; set; }
     }
 }
