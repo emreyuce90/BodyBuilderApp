@@ -50,8 +50,9 @@ namespace BodyBuilder.Application.Services {
                     await _workoutMovementRepository.Table.AddRangeAsync(workoutMovementList);
                     await _workoutMovementRepository.SaveAsync();
                     //kullanıcının antrenmanları geriye dönülür
-                    var workoutCount = await _workoutRepository.GetAllAsync(w => w.UserId.ToString() == "7aaf453f-56ea-4f7d-8877-4cec29072bfe" && !w.IsDeleted && w.IsActive,false).CountAsync(); ;
-                    return new Response() { Code = 200, Message = "Workout başarıyla kaydedildi" ,Resource=workoutCount };
+                    //var workoutCount = await _workoutRepository.GetAllAsync(w => w.UserId.ToString() == "7aaf453f-56ea-4f7d-8877-4cec29072bfe" && !w.IsDeleted && w.IsActive,false).CountAsync(); ;
+                    var workoutCount =await  GetWorkoutCountByUserIdAsync(Guid.Parse("7aaf453f-56ea-4f7d-8877-4cec29072bfe"));
+                    return new Response() { Code = 200, Message = "Workout başarıyla kaydedildi" ,Resource=workoutCount.Resource };
                 } else {
                     return new Response() { Code = 400, Message = "Workout listesi boş!" };
 
@@ -122,6 +123,23 @@ namespace BodyBuilder.Application.Services {
                 var w = _context.WorkoutLogs.FromSqlRaw("SELECT * from gymguru.GetWorkoutLogsByUserId({0})  ORDER BY 1 desc", userId).ToList();
 
                 return new Response(w);
+            } catch (Exception ex) {
+                return new Response(ex.Message);
+
+                throw;
+            }
+        }
+
+        public async Task<Response> GetWorkoutCountByUserIdAsync(Guid userId) {
+            try {
+                var dbWorkout = await _workoutRepository.GetAllAsync(w => w.IsActive == true && w.IsDeleted == false && w.UserId == userId, false).ToListAsync();
+                if (dbWorkout == null) {
+                    return new Response() { Success = false, Message = "Veritabanında böyle bir kayıt bulunamadı" };
+                }
+
+                var w = _context.WorkoutLogs.FromSqlRaw("SELECT * from gymguru.GetWorkoutLogsByUserId({0})  ORDER BY 1 desc", userId).ToList();
+
+                return new Response(w.Count);
             } catch (Exception ex) {
                 return new Response(ex.Message);
 

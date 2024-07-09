@@ -13,7 +13,7 @@ namespace BodyBuilder.Domain.Entities {
         public int Duration { get; set; }
         public string Title { get; set; } = string.Empty;
         public int SetNumber { get; set; }
-        public int Weight { get; set; }
+        public float Weight { get; set; }
         public int Reps { get; set; }
     }
 }

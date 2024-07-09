@@ -61,5 +61,10 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> GetWorkoutLogDetailsByWorkoutIdAsync([FromRoute] Guid workoutId) {
             return Ok(await _workoutService.GetWorkoutDetailByWorkoutIdAsync(workoutId));
         }
+
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetWorkoutCountByUserIdAsync([FromRoute] Guid userId) {
+            return Ok(await _workoutService.GetWorkoutCountByUserIdAsync(userId));
+        }
     }
 }

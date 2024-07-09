@@ -23,12 +23,20 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutMovement> WorkoutMovements { get; set; }
         public DbSet<WorkoutMovementSet> WorkoutMovementSets { get; set; }
+        public DbSet<Metrics> Metrics { get; set; }
+
+        public DbSet<BodyMetrics> BodyMetrics { get; set; }
         public DbSet<WorkoutLog> WorkoutLogs { get; set; }
         public DbSet<WorkoutLogDetail> WorkoutLogDetails { get; set; }
+        public DbSet<UserMetric> UserMetrics { get; set; }
+        public DbSet<UserMetricValue> UserMetricValues { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<WorkoutLog>().HasNoKey();
             modelBuilder.Entity<WorkoutLogDetail>().HasNoKey();
+            modelBuilder.Entity<UserMetric>().HasNoKey();
+            modelBuilder.Entity<UserMetricValue>().HasNoKey();
         }
 
    

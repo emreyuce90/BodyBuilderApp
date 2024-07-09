@@ -4,6 +4,7 @@ using BodyBuilder.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BodyBuilder.Infrastructure.Migrations
 {
     [DbContext(typeof(BodyBuilderContext))]
-    partial class BodyBuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20240704065742_mig_6")]
+    partial class mig_6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,33 +24,6 @@ namespace BodyBuilder.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyMetrics", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MetricName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BodyMetrics");
-                });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyPart", b =>
                 {
@@ -79,43 +55,6 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BodyParts");
-                });
-
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BodyMetricsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("MeasurementDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Value")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BodyMetricsId");
-
-                    b.ToTable("Metrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
@@ -469,8 +408,8 @@ namespace BodyBuilder.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Weight")
-                        .HasColumnType("real");
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("WorkoutDate")
                         .HasColumnType("datetime2");
@@ -556,17 +495,6 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.HasIndex("WorkoutMovementId");
 
                     b.ToTable("WorkoutMovementSets");
-                });
-
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
-                {
-                    b.HasOne("BodyBuilder.Domain.Entities.BodyMetrics", "BodyMetrics")
-                        .WithMany()
-                        .HasForeignKey("BodyMetricsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BodyMetrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
