@@ -10,6 +10,8 @@ namespace BodyBuilder.Domain.Entities {
         public string MetricName { get; set; } = String.Empty;
         public float Value { get; set; }
         public string Color { get; set; } = String.Empty;
+        public string Color2 { get; set; } = String.Empty;
+
 
     }
 }

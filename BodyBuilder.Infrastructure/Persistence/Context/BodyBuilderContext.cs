@@ -30,6 +30,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<WorkoutLogDetail> WorkoutLogDetails { get; set; }
         public DbSet<UserMetric> UserMetrics { get; set; }
         public DbSet<UserMetricValue> UserMetricValues { get; set; }
+        public DbSet<UserMetricLog> UserMetricLogs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -37,6 +38,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
             modelBuilder.Entity<WorkoutLogDetail>().HasNoKey();
             modelBuilder.Entity<UserMetric>().HasNoKey();
             modelBuilder.Entity<UserMetricValue>().HasNoKey();
+            modelBuilder.Entity<UserMetricLog>().HasNoKey();
         }
 
    

@@ -43,6 +43,23 @@ namespace BodyBuilder.Application.Services {
             }
         }
 
+        public async Task<Response> GetUserMetricLogsAsync(Guid userId, Guid bodymetricId) {
+            try {
+                var userMetrics = await _context.UserMetricLogs.FromSqlRaw(@"SELECT
+                                                                              MetricName
+                                                                             ,CreatedDate
+                                                                             ,Value
+                                                                              FROM gymguru.GetUserMeasurementLogs({0},{1}) ORDER BY 1 DESC", userId,bodymetricId).ToListAsync();
+                if (userMetrics.Count == 0) { 
+                return new Response() { Code=200,Message="Bu kullanıcıya ait kayıt bulunamadı"};
+                }  
+                return new Response(userMetrics);
+            } catch (Exception ex) {
+                return new Response(ex);
+                throw;
+            }
+        }
+
         public async Task<Response> GetUsersMetrics(Guid userId) {
             try {
                 //var metrics = await _metricsRepository.Table.Include(m => m.BodyMetrics).Where(m => m.UserId == userId && m.IsDeleted == false && m.IsActive == true).ToListAsync();

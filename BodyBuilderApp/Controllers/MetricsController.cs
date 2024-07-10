@@ -23,6 +23,10 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> CreateUserMetrics([FromBody]CreateUserMetricDto createUserMetricDto) {
             return Ok(await _metricsService.CreateUserMetricsAsync(createUserMetricDto.UserId,createUserMetricDto.Value,createUserMetricDto.BodyMetricId));
         }
-        
+
+        [HttpGet("{userId}/{bodymetricId}")]
+        public async Task<IActionResult> GetUserMetricLogs([FromRoute]Guid userId, [FromRoute] Guid bodymetricId) {
+            return Ok(await _metricsService.GetUserMetricLogsAsync(userId, bodymetricId));
+        }
     }
 }

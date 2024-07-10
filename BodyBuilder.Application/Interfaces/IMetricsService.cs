@@ -10,5 +10,6 @@ namespace BodyBuilder.Application.Interfaces {
         Task<Response> GetUsersMetrics(Guid userId);
         Task<Response> UpdateMetricsByMetricIdAsync(Guid metricId, float newValue);
         Task<Response> CreateUserMetricsAsync(Guid userId, float value,Guid bodymetricId);
+        Task<Response> GetUserMetricLogsAsync(Guid userId,Guid bodymetricId);
     }
 }
