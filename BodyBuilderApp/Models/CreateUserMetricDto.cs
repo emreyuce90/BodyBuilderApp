@@ -3,5 +3,6 @@
         public Guid BodyMetricId { get; set; }
         public Guid UserId { get; set; }
         public float Value { get; set; }
+        public Guid MetricId { get; set; }
     }
 }

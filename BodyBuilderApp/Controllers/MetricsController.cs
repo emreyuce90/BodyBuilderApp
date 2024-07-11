@@ -21,12 +21,17 @@ namespace BodyBuilderApp.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> CreateUserMetrics([FromBody]CreateUserMetricDto createUserMetricDto) {
-            return Ok(await _metricsService.CreateUserMetricsAsync(createUserMetricDto.UserId,createUserMetricDto.Value,createUserMetricDto.BodyMetricId));
+            return Ok(await _metricsService.CreateUserMetricsAsync(createUserMetricDto.UserId,createUserMetricDto.Value,createUserMetricDto.BodyMetricId,createUserMetricDto.MetricId));
         }
 
         [HttpGet("{userId}/{bodymetricId}")]
         public async Task<IActionResult> GetUserMetricLogs([FromRoute]Guid userId, [FromRoute] Guid bodymetricId) {
             return Ok(await _metricsService.GetUserMetricLogsAsync(userId, bodymetricId));
+        }
+
+        [HttpDelete("{metricId}")]
+        public async Task<IActionResult> DeleteMetric([FromRoute] Guid metricId) {
+            return Ok(await _metricsService.DeleteMetricByMetricIdAsync(metricId));
         }
     }
 }

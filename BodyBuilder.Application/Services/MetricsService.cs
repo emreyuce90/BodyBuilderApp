@@ -22,8 +22,16 @@ namespace BodyBuilder.Application.Services {
             _context = context;
         }
 
-        public async Task<Response> CreateUserMetricsAsync(Guid userId, float value, Guid bodymetricId) {
+        public async Task<Response> CreateUserMetricsAsync(Guid userId, float value, Guid bodymetricId,Guid metricId) {
             try {
+
+                //check if user has data in today
+                int count = await _metricsRepository.CountAsync(m => m.UserId == userId && m.BodyMetricsId == bodymetricId && m.MeasurementDate.Date == DateTime.Now.Date && m.MeasurementDate.Month == DateTime.Now.Month && m.MeasurementDate.Year == DateTime.Now.Year);
+               
+                if (count > 0) {
+                  return await UpdateMetricsByMetricIdAsync(metricId,value);
+                }
+
                 var userMetric = new Metrics {
                     UserId = userId,
                     Value = value,
@@ -35,7 +43,19 @@ namespace BodyBuilder.Application.Services {
                 await _metricsRepository.CreateAsync(userMetric);
                 await _context.SaveChangesAsync();
                 var metric = await _context.UserMetricValues.FromSqlRaw("SELECT * FROM GetUserMetricById({0},{1})", userId,bodymetricId).ToListAsync();
-                return new Response(metric[0]);
+                return new Response(metric[0].Value);
+
+            } catch (Exception ex) {
+                return new Response(ex);
+                throw;
+            }
+        }
+
+        public async Task<Response> DeleteMetricByMetricIdAsync(Guid metricId) {
+            try {
+                await _metricsRepository.DeleteAsync(metricId);
+                await _metricsRepository.SaveAsync();
+                return new Response() { Code = 200, Message = "Kullanıcı metriği silme işlemi başarıyla tamamlandı" };
 
             } catch (Exception ex) {
                 return new Response(ex);
@@ -46,10 +66,11 @@ namespace BodyBuilder.Application.Services {
         public async Task<Response> GetUserMetricLogsAsync(Guid userId, Guid bodymetricId) {
             try {
                 var userMetrics = await _context.UserMetricLogs.FromSqlRaw(@"SELECT
-                                                                              MetricName
+                                                                              MetricId
+                                                                             ,MetricName
                                                                              ,CreatedDate
                                                                              ,Value
-                                                                              FROM gymguru.GetUserMeasurementLogs({0},{1}) ORDER BY 1 DESC", userId,bodymetricId).ToListAsync();
+FROM gymguru.GetUserMeasurementLogs({0},{1}) ORDER BY CreatedDate DESC", userId,bodymetricId).ToListAsync();
                 if (userMetrics.Count == 0) { 
                 return new Response() { Code=200,Message="Bu kullanıcıya ait kayıt bulunamadı"};
                 }  
@@ -86,7 +107,7 @@ namespace BodyBuilder.Application.Services {
                 metric.Value = newValue;
                 _metricsRepository.UpdateAsync(metric);
                 await _metricsRepository.SaveAsync();
-                return new Response() { Code = 200, Resource = metric };
+                return new Response() { Code = 200, Resource = newValue };
 
             } catch (Exception ex) {
                 return new Response(ex);
