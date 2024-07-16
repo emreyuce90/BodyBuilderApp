@@ -45,8 +45,8 @@ namespace BodyBuilder.Application.Services {
                 await _bodyPartRepository.SaveAsync();
                 return new Response<BodyPartDto>() {
                     Code = 200,
-                    Success= true,
-                    Resource= _mapper.Map<BodyPartDto>(addedBodyPart)
+                    Success = true,
+                    Resource = _mapper.Map<BodyPartDto>(addedBodyPart)
                 };
             } catch (Exception ex) {
                 return new Response(ex);
@@ -57,7 +57,7 @@ namespace BodyBuilder.Application.Services {
         public async Task<Response> GetAllAsync() {
             try {
 
-            var bodyParts = await _bodyPartRepository.GetAllAsync(b=>b.IsActive == true).ToListAsync();
+                var bodyParts = await _bodyPartRepository.GetAllAsync(b => b.IsActive == true).ToListAsync();
                 var mappedValue = _mapper.Map<List<BodyPartDto>>(bodyParts);
                 return new Response<List<BodyPartDto>>(mappedValue);
             } catch (Exception ex) {
@@ -69,7 +69,32 @@ namespace BodyBuilder.Application.Services {
         public async Task<Response> GetByIdAsync(Guid Id) {
             try {
                 var bodyPart = await _bodyPartRepository.GetSingle(b => b.IsActive == true && b.Id == Id);
-                return new Response<BodyPartDto> { Code = 200,Resource= _mapper.Map<BodyPartDto>(bodyPart)};
+                return new Response<BodyPartDto> { Code = 200, Resource = _mapper.Map<BodyPartDto>(bodyPart) };
+            } catch (Exception ex) {
+                return new Response(ex);
+                throw;
+            }
+        }
+
+        public async Task<Response> GetSubBodyPartsByBodyPartIdAsync(Guid bodypartId) {
+
+            if (String.IsNullOrWhiteSpace(bodypartId.ToString())) {
+                return new Response() {
+                    Code = 400,
+                    Message = "BodypartId boş geçilemez"
+                };
+            }
+            try {
+                var bodyParts = await _bodyPartRepository.Table.Include(b => b.SubBodyParts).FirstOrDefaultAsync(b => b.Id == bodypartId && b.IsDeleted == false && b.IsActive == true);
+                if (bodyParts == null) {
+                    return new Response() { Code = 400, Message = "Göndermiş olduğunuz bodypartId ye ait kayıt veritabanında bulunamadı" };
+                } else {
+
+                    return new Response() {
+                        Code = 200,
+                        Resource = bodyParts.SubBodyParts.ToList() ?? new List<SubBodyPart>()
+                    };
+                }
             } catch (Exception ex) {
                 return new Response(ex);
                 throw;

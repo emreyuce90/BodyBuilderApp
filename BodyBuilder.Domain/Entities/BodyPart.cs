@@ -12,5 +12,6 @@ namespace BodyBuilder.Domain.Entities {
         public  string Name{ get; set; }
         public string PictureUrl { get; set; }
         public virtual List<Movement> Movements { get; set; }
+        public virtual List<SubBodyPart> SubBodyParts { get; set; }
     }
 }

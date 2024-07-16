@@ -24,6 +24,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<WorkoutMovement> WorkoutMovements { get; set; }
         public DbSet<WorkoutMovementSet> WorkoutMovementSets { get; set; }
         public DbSet<Metrics> Metrics { get; set; }
+        public DbSet<SubBodyPart>SubBodyPart { get; set; }
 
         public DbSet<BodyMetrics> BodyMetrics { get; set; }
         public DbSet<WorkoutLog> WorkoutLogs { get; set; }

@@ -4,6 +4,7 @@ using BodyBuilder.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BodyBuilder.Infrastructure.Migrations
 {
     [DbContext(typeof(BodyBuilderContext))]
-    partial class BodyBuilderContextModelSnapshot : ModelSnapshot
+    [Migration("20240716073920_mig_11")]
+    partial class mig_11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,7 +271,8 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BodyPartId");
+                    b.HasIndex("BodyPartId")
+                        .IsUnique();
 
                     b.ToTable("SubBodyPart");
                 });
@@ -687,8 +691,8 @@ namespace BodyBuilder.Infrastructure.Migrations
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubBodyPart", b =>
                 {
                     b.HasOne("BodyBuilder.Domain.Entities.BodyPart", null)
-                        .WithMany("SubBodyParts")
-                        .HasForeignKey("BodyPartId")
+                        .WithOne("SubBodyPart")
+                        .HasForeignKey("BodyBuilder.Domain.Entities.SubBodyPart", "BodyPartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -762,7 +766,8 @@ namespace BodyBuilder.Infrastructure.Migrations
                 {
                     b.Navigation("Movements");
 
-                    b.Navigation("SubBodyParts");
+                    b.Navigation("SubBodyPart")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>

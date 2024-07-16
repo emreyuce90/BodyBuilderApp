@@ -45,5 +45,10 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> Update([FromBody] BodyPartUpdateDto bodyPartUpdateDto) {
             return Ok(await _bodyPartService.UpdateAsync(bodyPartUpdateDto));
         }
+
+        [HttpGet("bodypart/{bodpartId}")]
+        public async Task<IActionResult> GetSubBodyPartsByBodyPartId([FromRoute] Guid bodpartId) {
+            return Ok(await _bodyPartService.GetSubBodyPartsByBodyPartIdAsync(bodpartId));
+        }
     }
 }

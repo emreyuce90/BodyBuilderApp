@@ -15,5 +15,6 @@ namespace BodyBuilder.Application.Dtos.Movement {
         public string ImageUrl { get; set; }
         public string VideoUrl { get; set; }
         public Guid BodyPartId { get; set; }
+        public Guid SubBodyPartId { get; set; }
     }
 }

@@ -23,4 +23,10 @@
     <ProjectReference Include="..\BodyBuilder.Infrastructure\BodyBuilder.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\images\arnold-press-400.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

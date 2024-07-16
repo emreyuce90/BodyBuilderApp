@@ -12,5 +12,6 @@ namespace BodyBuilder.Application.Interfaces {
         Task<Response> GetByIdAsync(Guid Id);
         Task<Response> AddAsync(BodyPartAddDto bodyPartAddDto);
         Task<Response> UpdateAsync(BodyPartUpdateDto bodyPartUpdateDto);
+        Task<Response> GetSubBodyPartsByBodyPartIdAsync(Guid bodypartId);
     }
 }
