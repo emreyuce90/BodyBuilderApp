@@ -111,7 +111,7 @@ namespace BodyBuilderApp {
 
             builder.Services.AddStackExchangeRedisCache(opt =>
             {
-                opt.Configuration = "redis_container:6379";
+                opt.Configuration = "redisService:6379";
             });
 
 
