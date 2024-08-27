@@ -29,6 +29,7 @@ namespace BodyBuilder.Application.Extensions {
             services.AddScoped<IProgrammeService,ProgrammeService>();
             services.AddHttpContextAccessor();
             services.AddScoped<IMetricsService, MetricsService>();
+            services.AddSingleton<IRedisService, RedisService>();
 
             #region Validations Register 
 

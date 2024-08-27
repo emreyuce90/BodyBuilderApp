@@ -21,14 +21,15 @@ namespace BodyBuilder.Application.Services {
         private readonly IMapper _mapper;
         private readonly IValidator<MovementAddDto> _validator;
         private readonly IValidator<MovementUpdateDto> _updatevalidator;
-        private readonly IDistributedCache _distributedCache;
+        private readonly IRedisService _redisService;
 
-        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator, IDistributedCache distributedCache) {
+
+        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator, IRedisService redisService) {
             _movementRepository = movementRepository;
             _mapper = mapper;
             _validator = validator;
             _updatevalidator = updatevalidator;
-            _distributedCache = distributedCache;
+            _redisService = redisService;
         }
 
         public async Task<Response> AddAsync(MovementAddDto entity) {
@@ -59,19 +60,19 @@ namespace BodyBuilder.Application.Services {
                 string key = "movements";
                 
                 //reading cache
-                string? cachedData = await _distributedCache.GetStringAsync(key);
+                List<Movement>? cachedData = await _redisService.GetAsync<List<Movement>>(key);
                 
                 List<Movement> movements;
 
-                if (String.IsNullOrWhiteSpace(cachedData)) {
+                if (cachedData is null) {
 
                     //veritabanını sorgula 
                     movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
                     //bu listeyi serilize et
-                    var serializedData = JsonConvert.SerializeObject(movements);
-                    await _distributedCache.SetStringAsync(key, serializedData,new DistributedCacheEntryOptions { AbsoluteExpiration=DateTime.Now.AddDays(1)});
+                 
+                    await _redisService.SetAsync(key, movements);
                 } else {
-                    movements = JsonConvert.DeserializeObject<List<Movement>>(cachedData);
+                    movements = cachedData;
                 }
 
                 return new Response() { Code = 200, Resource = _mapper.Map<List<MovementDto>>(movements) };
