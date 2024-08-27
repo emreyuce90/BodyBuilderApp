@@ -14,13 +14,18 @@ namespace BodyBuilderApp.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync() {
-            
+
             return Ok(await _programmeService.GetAllAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAllByUserId(Guid id) {
             return Ok(await _programmeService.GetByUserIdAsync(id));
+        }
+
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> CreateProgramme([FromRoute] Guid userId, [FromBody] CreateCustomProgramme createCustomProgramme) {
+            return Ok(await _programmeService.CreateCustomWorkoutAsync(userId,createCustomProgramme));
         }
     }
 }

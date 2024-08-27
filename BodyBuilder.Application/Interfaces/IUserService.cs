@@ -11,7 +11,7 @@ namespace BodyBuilder.Application.Interfaces
 {
     public interface IUserService {
         Task<Response<List<UserDto>>> GetAllAsync(bool isTracking = true);
-        Task<Response<UserDto>> GetById(Guid id);
+        Task<bool> GetById(Guid id);
         Task<Response<UserDto>> UpdateAsync(UserDto userDto);
         Task<bool> DeleteAsync(Guid id);
         Task<UserDto> GetUserByEMail(string email);

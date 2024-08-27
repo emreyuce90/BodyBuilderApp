@@ -26,7 +26,8 @@ namespace BodyBuilder.Application.Services {
         public async Task<Response> GetAllBySubProgrammeIdAsync(Guid subProgrammeId) {
             try {
                 var spm = await _subProgrammeMovementRepository.GetAllAsync(sp => sp.IsActive == true && sp.IsDeleted == false && sp.SubProgrammeId == subProgrammeId).Include(x => x.Movement).ToListAsync();
-                return new Response(spm);
+
+                return new Response(spm ?? new List<SubProgrammeMovement>());
             } catch (Exception ex) {
 
                 return new Response(ex.Message);

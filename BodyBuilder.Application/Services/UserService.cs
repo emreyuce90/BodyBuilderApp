@@ -28,8 +28,9 @@ namespace BodyBuilder.Application.Services {
             return new Response<List<UserDto>>(_mapper.Map<List<UserDto>>(users));
         }
 
-        public Task<Response<UserDto>> GetById(Guid id) {
-            throw new NotImplementedException();
+        public async Task<bool> GetById(Guid id) {
+            var user = await _userRepository.GetById(id);
+            return user == null ? false : true; 
         }
 
         public Task<UserDto> GetUserByEMail(string email) {

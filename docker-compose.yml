@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  bodybuilderapp:
+    image: ${DOCKER_REGISTRY-}bodybuilderapp
+    build:
+      context: .
+      dockerfile: BodyBuilderApp/Dockerfile
+   
+  redisService:
+     image: redis
+     container_name: redis_container
+     ports:
+        - "6379:6379"
+
+  

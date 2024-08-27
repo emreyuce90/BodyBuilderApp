@@ -7,6 +7,8 @@ using BodyBuilder.Domain.Interfaces;
 using BodyBuilderApp.Communication;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +21,14 @@ namespace BodyBuilder.Application.Services {
         private readonly IMapper _mapper;
         private readonly IValidator<MovementAddDto> _validator;
         private readonly IValidator<MovementUpdateDto> _updatevalidator;
+        private readonly IDistributedCache _distributedCache;
 
-        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator) {
+        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator, IDistributedCache distributedCache) {
             _movementRepository = movementRepository;
             _mapper = mapper;
             _validator = validator;
             _updatevalidator = updatevalidator;
+            _distributedCache = distributedCache;
         }
 
         public async Task<Response> AddAsync(MovementAddDto entity) {
@@ -51,7 +55,25 @@ namespace BodyBuilder.Application.Services {
 
         public async Task<Response> GetAllAsync() {
             try {
-                var movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
+                //defining key
+                string key = "movements";
+                
+                //reading cache
+                string? cachedData = await _distributedCache.GetStringAsync(key);
+                
+                List<Movement> movements;
+
+                if (String.IsNullOrWhiteSpace(cachedData)) {
+
+                    //veritabanını sorgula 
+                    movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
+                    //bu listeyi serilize et
+                    var serializedData = JsonConvert.SerializeObject(movements);
+                    await _distributedCache.SetStringAsync(key, serializedData,new DistributedCacheEntryOptions { AbsoluteExpiration=DateTime.Now.AddDays(1)});
+                } else {
+                    movements = JsonConvert.DeserializeObject<List<Movement>>(cachedData);
+                }
+
                 return new Response() { Code = 200, Resource = _mapper.Map<List<MovementDto>>(movements) };
             } catch (Exception ex) {
                 return new Response(ex);

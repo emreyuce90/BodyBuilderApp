@@ -28,7 +28,8 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> FinishWorkout([FromRoute] Guid workoutId,string endTime,int duration) {
             TimeSpan _endTime;
             TimeSpan.TryParse(endTime, out _endTime);
-            return Ok(await _workoutService.FinishWorkout(workoutId, _endTime,duration));
+            var res = await _workoutService.FinishWorkout(workoutId, _endTime, duration);
+            return Ok(res);
 
         }
 

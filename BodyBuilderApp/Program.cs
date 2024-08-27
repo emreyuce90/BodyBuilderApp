@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using System.Text;
 
 namespace BodyBuilderApp {
@@ -58,10 +59,16 @@ namespace BodyBuilderApp {
 
             builder.Services.AddDbContext<BodyBuilderContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("remoteDb")));
-            builder.Services.AddControllersWithViews()
-    .AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-);
+
+
+            builder.Services.AddControllers()
+                       .AddNewtonsoftJson(options => {
+                           options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                           options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                       });
+
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c => {
@@ -99,7 +106,15 @@ namespace BodyBuilderApp {
                     new string[] {}
                         }
                     });
+
             });
+
+            builder.Services.AddStackExchangeRedisCache(opt =>
+            {
+                opt.Configuration = "redis_container:6379";
+            });
+
+
             builder.Services.AddInfraDependencies();
             builder.Services.AddApplicationDependencies();
             var app = builder.Build();
