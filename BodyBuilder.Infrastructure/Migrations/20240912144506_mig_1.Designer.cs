@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BodyBuilder.Infrastructure.Migrations
 {
     [DbContext(typeof(BodyBuilderContext))]
-    [Migration("20240508190912_mig_2")]
-    partial class mig_2
+    [Migration("20240912144506_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,41 @@ namespace BodyBuilder.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyMetrics", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MetricName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BodyMetrics");
+                });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyPart", b =>
                 {
@@ -45,12 +80,53 @@ namespace BodyBuilder.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.ToTable("BodyParts");
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BodyMetricsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("MeasurementDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BodyMetricsId");
+
+                    b.ToTable("Metrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
@@ -79,8 +155,10 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("SubBodyPartId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Tip")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -92,7 +170,6 @@ namespace BodyBuilder.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("VideoUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -165,6 +242,38 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.SubBodyPart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BodyPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BodyPartId");
+
+                    b.ToTable("SubBodyPart");
+                });
+
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgramme", b =>
                 {
                     b.Property<Guid>("Id")
@@ -182,8 +291,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProgrammeId")
                         .HasColumnType("uniqueidentifier");
@@ -295,6 +403,64 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetric", b =>
+                {
+                    b.Property<Guid>("BodyMetricsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("MetricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MetricName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetricLog", b =>
+                {
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MetricId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MetricName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetricValue", b =>
+                {
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
             modelBuilder.Entity("BodyBuilder.Domain.Entities.UserRefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -337,8 +503,11 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -346,8 +515,8 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("SubProgrammeId")
                         .HasColumnType("uniqueidentifier");
@@ -366,6 +535,62 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.HasIndex("SubProgrammeId");
 
                     b.ToTable("Workouts");
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutLog", b =>
+                {
+                    b.Property<DateTime>("WorkoutDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WorkoutId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WorkoutName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WorkoutTime")
+                        .HasColumnType("int");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutLogDetail", b =>
+                {
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SetNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("WorkoutDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WorkoutId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WorkoutName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("WorkoutTime")
+                        .HasColumnType("time");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutMovement", b =>
@@ -425,8 +650,8 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
 
                     b.Property<Guid>("WorkoutMovementId")
                         .HasColumnType("uniqueidentifier");
@@ -436,6 +661,17 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.HasIndex("WorkoutMovementId");
 
                     b.ToTable("WorkoutMovementSets");
+                });
+
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
+                {
+                    b.HasOne("BodyBuilder.Domain.Entities.BodyMetrics", "BodyMetrics")
+                        .WithMany()
+                        .HasForeignKey("BodyMetricsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BodyMetrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
@@ -458,30 +694,43 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BodyBuilder.Domain.Entities.SubBodyPart", b =>
+                {
+                    b.HasOne("BodyBuilder.Domain.Entities.BodyPart", null)
+                        .WithMany("SubBodyParts")
+                        .HasForeignKey("BodyPartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgramme", b =>
                 {
-                    b.HasOne("BodyBuilder.Domain.Entities.Programme", null)
+                    b.HasOne("BodyBuilder.Domain.Entities.Programme", "Programme")
                         .WithMany("SubProgrammes")
                         .HasForeignKey("ProgrammeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Programme");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgrammeMovement", b =>
                 {
                     b.HasOne("BodyBuilder.Domain.Entities.Movement", "Movement")
-                        .WithMany("SubProgrammeMovements")
+                        .WithMany()
                         .HasForeignKey("MovementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BodyBuilder.Domain.Entities.SubProgramme", null)
+                    b.HasOne("BodyBuilder.Domain.Entities.SubProgramme", "SubProgramme")
                         .WithMany("SubProgrammeMovements")
                         .HasForeignKey("SubProgrammeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Movement");
+
+                    b.Navigation("SubProgramme");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Workout", b =>
@@ -526,11 +775,8 @@ namespace BodyBuilder.Infrastructure.Migrations
             modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyPart", b =>
                 {
                     b.Navigation("Movements");
-                });
 
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
-                {
-                    b.Navigation("SubProgrammeMovements");
+                    b.Navigation("SubBodyParts");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Programme", b =>

@@ -25,7 +25,9 @@ namespace BodyBuilderApp.Controllers {
 
         [HttpPost("{userId}")]
         public async Task<IActionResult> CreateProgramme([FromRoute] Guid userId, [FromBody] CreateCustomProgramme createCustomProgramme) {
-            return Ok(await _programmeService.CreateCustomWorkoutAsync(userId,createCustomProgramme));
+            return Ok(await _programmeService.CreateCustomWorkoutAsync(userId, createCustomProgramme));
         }
+
+
     }
 }

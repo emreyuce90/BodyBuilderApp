@@ -10,7 +10,7 @@ namespace BodyBuilder.Domain.Entities {
 
         public Guid ProgrammeId { get; set; }
         [StringLength(100, ErrorMessage = "Title alanı 100 karakterden fazla olamaz")]
-
+        public Programme Programme { get; set; }
         public  string Name { get; set; }
         public virtual List<SubProgrammeMovement> SubProgrammeMovements{ get; set; }
         public virtual List<Workout> Workouts { get; set; }

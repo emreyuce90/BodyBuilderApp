@@ -17,13 +17,15 @@ namespace BodyBuilder.Application.Services {
         private readonly IValidator<WorkoutAddDto> _validator;
         private readonly IWorkoutMovementRepository _workoutMovementRepository;
         private readonly ISubProgrammeRepository _subProgrammeRepository;
-        public WorkoutService(IWorkoutRepository workoutRepository, IMapper mapper, IValidator<WorkoutAddDto> validator, IWorkoutMovementRepository workoutMovementRepository, ISubProgrammeRepository subProgrammeRepository, BodyBuilderContext context) {
+        private readonly IUserRepository _userRepository;
+        public WorkoutService(IWorkoutRepository workoutRepository, IMapper mapper, IValidator<WorkoutAddDto> validator, IWorkoutMovementRepository workoutMovementRepository, ISubProgrammeRepository subProgrammeRepository, BodyBuilderContext context, IUserRepository userRepository) {
             _workoutRepository = workoutRepository;
             _mapper = mapper;
             _validator = validator;
             _workoutMovementRepository = workoutMovementRepository;
             _subProgrammeRepository = subProgrammeRepository;
             _context = context;
+            _userRepository = userRepository;
         }
 
         public async Task<Response> CreateWorkoutMovement(Guid workoutId, List<WorkoutMovementAddDto> movementAddDtos) {
@@ -132,14 +134,17 @@ namespace BodyBuilder.Application.Services {
 
         public async Task<Response> GetWorkoutCountByUserIdAsync(Guid userId) {
             try {
-                var dbWorkout = await _workoutRepository.GetAllAsync(w => w.IsActive == true && w.IsDeleted == false && w.UserId == userId, false).ToListAsync();
-                if (dbWorkout == null) {
-                    return new Response() { Success = false, Message = "Veritabanında böyle bir kayıt bulunamadı" };
+
+                var userExist = await _userRepository.Table.AnyAsync(u => u.Id == userId && !u.IsDeleted && u.IsActive);
+                if (!userExist) {
+                    return new Response() { Code = 400, Message = "Böyle bir kullanıcı bulunamadı" };
                 }
 
-                var w = _context.WorkoutLogs.FromSqlRaw("SELECT * from gymguru.GetWorkoutLogsByUserId({0})  ORDER BY 1 desc", userId).ToList();
+                var workoutCount = await _workoutRepository.Table.CountAsync(w => w.IsActive == true && w.IsDeleted == false && w.UserId == userId);
 
-                return new Response(w.Count);
+                
+
+                return new Response(workoutCount);
             } catch (Exception ex) {
                 return new Response(ex.Message);
 

@@ -27,8 +27,20 @@ namespace BodyBuilder.Application.Services {
 
         public async Task<Response> GetByIdAsync(Guid programmeId) {
             try {
-               var subProgrammes = await _subProgrammeRepository.GetAllAsync(sp => sp.ProgrammeId == programmeId && sp.IsActive == true).OrderBy(o=>o.Name).ToListAsync();
-                return new Response(_mapper.Map<List<SubProgrammeDto>>(subProgrammes));
+               List<Domain.Entities.SubProgramme> subProgrammes = await _subProgrammeRepository.GetAllAsync(sp => sp.ProgrammeId == programmeId && sp.IsActive == true).OrderBy(o=>o.Name).ToListAsync();
+                List<SubProgrammeDto> subprogrammeList = new List<SubProgrammeDto>();
+                foreach (var sp in subProgrammes)
+                {
+                    SubProgrammeDto dto = new SubProgrammeDto() {
+                        Id = sp.Id,
+                        Name = sp.Name,
+                        ProgrammeId = sp.ProgrammeId
+                    };
+
+                    subprogrammeList.Add(dto);
+                }
+
+                return new Response(subprogrammeList);
             } catch (Exception ex) {
                 return new Response(ex.Message);
                 throw;

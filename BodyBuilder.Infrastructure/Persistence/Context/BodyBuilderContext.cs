@@ -7,10 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BodyBuilder.Infrastructure.Persistence.Context {
-    public class BodyBuilderContext :DbContext{
-        public BodyBuilderContext(DbContextOptions options):base(options)
-        {
-            
+    public class BodyBuilderContext : DbContext {
+        public BodyBuilderContext(DbContextOptions options) : base(options) {
+
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -24,7 +23,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
         public DbSet<WorkoutMovement> WorkoutMovements { get; set; }
         public DbSet<WorkoutMovementSet> WorkoutMovementSets { get; set; }
         public DbSet<Metrics> Metrics { get; set; }
-        public DbSet<SubBodyPart>SubBodyPart { get; set; }
+        public DbSet<SubBodyPart> SubBodyPart { get; set; }
 
         public DbSet<BodyMetrics> BodyMetrics { get; set; }
         public DbSet<WorkoutLog> WorkoutLogs { get; set; }
@@ -35,14 +34,38 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<WorkoutLog>().HasNoKey();
-            modelBuilder.Entity<WorkoutLogDetail>().HasNoKey();
-            modelBuilder.Entity<UserMetric>().HasNoKey();
-            modelBuilder.Entity<UserMetricValue>().HasNoKey();
-            modelBuilder.Entity<UserMetricLog>().HasNoKey();
+            // Bir programme birden fazla subprogrammeye sahiptir
+            modelBuilder.Entity<Programme>()
+           .HasMany(p => p.SubProgrammes)
+           // Bir subprogrammenin tek bir programmesi olabilir
+           .WithOne(sp => sp.Programme)
+           // Ayırt edici nokta fk ProgrammeId dir
+           .HasForeignKey(sp => sp.ProgrammeId);
+
+            modelBuilder.Entity<SubProgramme>()
+                // Bir subprogramme birden fazla spMovementsa sahiptir
+                .HasMany(sp => sp.SubProgrammeMovements)
+                //fakat bir sp movements tek bir subprogrammeye aittir
+                .WithOne(spm => spm.SubProgramme)
+                // burada da sp id fk dir
+                .HasForeignKey(spm => spm.SubProgrammeId);
+
+            modelBuilder.Entity<SubProgrammeMovement>()
+                .HasOne(spm => spm.Movement)
+                .WithMany()
+                .HasForeignKey(spm => spm.MovementId);
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WorkoutLog>().HasNoKey().ToView(null);
+            modelBuilder.Entity<WorkoutLogDetail>().HasNoKey().ToView(null);
+            modelBuilder.Entity<UserMetric>().HasNoKey().ToView(null);
+            modelBuilder.Entity<UserMetricValue>().HasNoKey().ToView(null);
+            modelBuilder.Entity<UserMetricLog>().HasNoKey().ToView(null);
+
         }
 
-   
+
 
     }
 }

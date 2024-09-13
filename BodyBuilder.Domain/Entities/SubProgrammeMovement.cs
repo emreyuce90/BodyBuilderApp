@@ -14,7 +14,7 @@ namespace BodyBuilder.Domain.Entities {
         public Guid SubProgrammeId { get; set; }
         public int Reps { get; set; }
         public int Sets { get; set; }
-
+        public SubProgramme SubProgramme { get; set; }
         public Movement? Movement { get; set; }
     }
 }

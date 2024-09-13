@@ -19,7 +19,7 @@ namespace BodyBuilder.Application.Mappings
         {
             CreateMap<WorkoutAddDto, Workout>().ReverseMap();
             CreateMap<Workout, WorkoutDto>().ReverseMap();
-            CreateMap<SubProgramme, SubProgrammeDto>().ReverseMap();
+            CreateMap<Domain.Entities.SubProgramme, SubProgrammeDto>().ReverseMap();
             CreateMap<ProgrammeAddDto, Programme>().ReverseMap();
             CreateMap<ProgrammeDto, Programme>().ReverseMap();
             CreateMap<BodyPart, BodyPartDto>().ReverseMap();

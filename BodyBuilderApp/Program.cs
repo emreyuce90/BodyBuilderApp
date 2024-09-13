@@ -58,7 +58,7 @@ namespace BodyBuilderApp {
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             builder.Services.AddDbContext<BodyBuilderContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("remoteDb")));
+    options.UseSqlServer(configuration.GetConnectionString("dockerDB")));
 
 
             builder.Services.AddControllers()
@@ -94,6 +94,12 @@ namespace BodyBuilderApp {
                     Scheme = "bearer"
                 });
 
+                // Döngüleri önlemek için
+                c.UseAllOfToExtendReferenceSchemas();
+
+                // Model döngü ve karmaşık yapıları daha iyi ele almak için
+                c.CustomSchemaIds(type => type.FullName);
+
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement{    {
                     new OpenApiSecurityScheme
                     {
@@ -111,7 +117,8 @@ namespace BodyBuilderApp {
 
             builder.Services.AddStackExchangeRedisCache(opt =>
             {
-                opt.Configuration = "redisService:6379";
+                //opt.Configuration = "redisService:6379";
+                opt.Configuration = "172.19.165.27:6379";
             });
 
 

@@ -54,7 +54,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BodyMetrics", (string)null);
+                    b.ToTable("BodyMetrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.BodyPart", b =>
@@ -86,7 +86,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BodyParts", (string)null);
+                    b.ToTable("BodyParts");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
@@ -123,7 +123,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("BodyMetricsId");
 
-                    b.ToTable("Metrics", (string)null);
+                    b.ToTable("Metrics");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
@@ -152,11 +152,10 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("SubBodyPartId")
+                    b.Property<Guid?>("SubBodyPartId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Tip")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -168,14 +167,13 @@ namespace BodyBuilder.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("VideoUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BodyPartId");
 
-                    b.ToTable("Movements", (string)null);
+                    b.ToTable("Movements");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Programme", b =>
@@ -206,7 +204,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Programmes", (string)null);
+                    b.ToTable("Programmes");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Role", b =>
@@ -238,7 +236,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubBodyPart", b =>
@@ -270,7 +268,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("BodyPartId");
 
-                    b.ToTable("SubBodyPart", (string)null);
+                    b.ToTable("SubBodyPart");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgramme", b =>
@@ -290,8 +288,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProgrammeId")
                         .HasColumnType("uniqueidentifier");
@@ -303,7 +300,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("ProgrammeId");
 
-                    b.ToTable("SubProgrammes", (string)null);
+                    b.ToTable("SubProgrammes");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgrammeMovement", b =>
@@ -342,7 +339,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("SubProgrammeId");
 
-                    b.ToTable("SubProgrammeMovements", (string)null);
+                    b.ToTable("SubProgrammeMovements");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.User", b =>
@@ -400,7 +397,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetric", b =>
@@ -426,7 +423,9 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<float>("Value")
                         .HasColumnType("real");
 
-                    b.ToTable("UserMetrics", (string)null);
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetricLog", b =>
@@ -444,7 +443,9 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<float>("Value")
                         .HasColumnType("real");
 
-                    b.ToTable("UserMetricLogs", (string)null);
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.UserMetricValue", b =>
@@ -452,7 +453,9 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<float>("Value")
                         .HasColumnType("real");
 
-                    b.ToTable("UserMetricValues", (string)null);
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.UserRefreshToken", b =>
@@ -485,7 +488,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRefreshTokens", (string)null);
+                    b.ToTable("UserRefreshTokens");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Workout", b =>
@@ -528,7 +531,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("SubProgrammeId");
 
-                    b.ToTable("Workouts", (string)null);
+                    b.ToTable("Workouts");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutLog", b =>
@@ -546,7 +549,9 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<int>("WorkoutTime")
                         .HasColumnType("int");
 
-                    b.ToTable("WorkoutLogs", (string)null);
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutLogDetail", b =>
@@ -580,7 +585,9 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Property<TimeSpan>("WorkoutTime")
                         .HasColumnType("time");
 
-                    b.ToTable("WorkoutLogDetails", (string)null);
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutMovement", b =>
@@ -613,7 +620,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutMovements", (string)null);
+                    b.ToTable("WorkoutMovements");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.WorkoutMovementSet", b =>
@@ -650,7 +657,7 @@ namespace BodyBuilder.Infrastructure.Migrations
 
                     b.HasIndex("WorkoutMovementId");
 
-                    b.ToTable("WorkoutMovementSets", (string)null);
+                    b.ToTable("WorkoutMovementSets");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Metrics", b =>
@@ -695,28 +702,32 @@ namespace BodyBuilder.Infrastructure.Migrations
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgramme", b =>
                 {
-                    b.HasOne("BodyBuilder.Domain.Entities.Programme", null)
+                    b.HasOne("BodyBuilder.Domain.Entities.Programme", "Programme")
                         .WithMany("SubProgrammes")
                         .HasForeignKey("ProgrammeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Programme");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.SubProgrammeMovement", b =>
                 {
                     b.HasOne("BodyBuilder.Domain.Entities.Movement", "Movement")
-                        .WithMany("SubProgrammeMovements")
+                        .WithMany()
                         .HasForeignKey("MovementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BodyBuilder.Domain.Entities.SubProgramme", null)
+                    b.HasOne("BodyBuilder.Domain.Entities.SubProgramme", "SubProgramme")
                         .WithMany("SubProgrammeMovements")
                         .HasForeignKey("SubProgrammeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Movement");
+
+                    b.Navigation("SubProgramme");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Workout", b =>
@@ -763,11 +774,6 @@ namespace BodyBuilder.Infrastructure.Migrations
                     b.Navigation("Movements");
 
                     b.Navigation("SubBodyParts");
-                });
-
-            modelBuilder.Entity("BodyBuilder.Domain.Entities.Movement", b =>
-                {
-                    b.Navigation("SubProgrammeMovements");
                 });
 
             modelBuilder.Entity("BodyBuilder.Domain.Entities.Programme", b =>

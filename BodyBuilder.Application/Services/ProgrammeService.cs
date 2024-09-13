@@ -51,16 +51,16 @@ namespace BodyBuilder.Application.Services {
                             SubProgrammeId = sp.Id,
                             Reps = m.Reps,
                             Sets = m.Sets,
-                            Movement = new Movement() {
-                                BodyPartId = m.Movement.BodyPartId,
-                                Description = m.Movement.Description,
-                                ImageUrl = m.Movement.ImageUrl,
-                                SubBodyPartId= m.Movement.SubBodyPartId,
-                                VideoUrl = m.Movement.VideoUrl,
-                                Title = m.Movement.Title,
-                                Tip = m.Movement.Tip,
+                            //Movement = new Movement() {
+                            //    BodyPartId = m.Movement.BodyPartId,
+                            //    Description = m.Movement.Description,
+                            //    ImageUrl = m.Movement.ImageUrl,
+                            //    SubBodyPartId= m.Movement.SubBodyPartId,
+                            //    VideoUrl = m.Movement.VideoUrl,
+                            //    Title = m.Movement.Title,
+                            //    Tip = m.Movement.Tip,
                                 
-                            }
+                            //}
                         };
                         ml.Add(spm);
                     }

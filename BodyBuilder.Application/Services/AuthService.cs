@@ -151,6 +151,9 @@ namespace BodyBuilder.Application.Services {
 
             await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
+
+            // user metric registration
+            
             return new Response<UserDto>(_mapper.Map<UserDto>(user));
 
         }
