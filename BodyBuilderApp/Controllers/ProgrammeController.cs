@@ -27,7 +27,15 @@ namespace BodyBuilderApp.Controllers {
         public async Task<IActionResult> CreateProgramme([FromRoute] Guid userId, [FromBody] CreateCustomProgramme createCustomProgramme) {
             return Ok(await _programmeService.CreateCustomWorkoutAsync(userId, createCustomProgramme));
         }
-
+        /// <summary>
+        /// Guid tipinde programmeId alır ve programı veritabanından soft delete olarak siler
+        /// </summary>
+        /// <param name="programmeId"></param>
+        /// <returns>Geriye success ya da errormessage döner</returns>
+        [HttpDelete("{programmeId}")]
+        public async Task<IActionResult> DeleteProgramme([FromRoute]Guid programmeId) {
+            return Ok(await _programmeService.DeleteProgrammeAsync(programmeId));
+        }
 
     }
 }

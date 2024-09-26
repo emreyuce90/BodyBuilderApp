@@ -53,7 +53,8 @@ namespace BodyBuilder.Infrastructure.Persistence.Context {
             modelBuilder.Entity<SubProgrammeMovement>()
                 .HasOne(spm => spm.Movement)
                 .WithMany()
-                .HasForeignKey(spm => spm.MovementId);
+                .HasForeignKey(spm => spm.MovementId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
 

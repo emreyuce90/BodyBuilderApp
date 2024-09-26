@@ -21,15 +21,14 @@ namespace BodyBuilder.Application.Services {
         private readonly IMapper _mapper;
         private readonly IValidator<MovementAddDto> _validator;
         private readonly IValidator<MovementUpdateDto> _updatevalidator;
-        private readonly IRedisService _redisService;
+        
 
 
-        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator, IRedisService redisService) {
+        public MovementService(IMovementRepository movementRepository, IMapper mapper, IValidator<MovementAddDto> validator, IValidator<MovementUpdateDto> updatevalidator) {
             _movementRepository = movementRepository;
             _mapper = mapper;
             _validator = validator;
             _updatevalidator = updatevalidator;
-            _redisService = redisService;
         }
 
         public async Task<Response> AddAsync(MovementAddDto entity) {
@@ -57,23 +56,24 @@ namespace BodyBuilder.Application.Services {
         public async Task<Response> GetAllAsync() {
             try {
                 //defining key
-                string key = "movements";
+                //string key = "movements";
                 
-                //reading cache
-                List<Movement>? cachedData = await _redisService.GetAsync<List<Movement>>(key);
+                ////reading cache
+                //List<Movement>? cachedData = await _redisService.GetAsync<List<Movement>>(key);
                 
-                List<Movement> movements;
+                //List<Movement> movements;
 
-                if (cachedData is null) {
+                //if (cachedData is null || cachedData.Count == 0) {
 
-                    //veritabanını sorgula 
-                    movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
-                    //bu listeyi serilize et
+                //    //veritabanını sorgula 
+                //    movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
+                //    //bu listeyi serilize et
                  
-                    await _redisService.SetAsync(key, movements);
-                } else {
-                    movements = cachedData;
-                }
+                //    await _redisService.SetAsync(key, movements);
+                //} else {
+                //    movements = cachedData;
+                //}
+                var movements = await _movementRepository.GetAllAsync(m => m.IsActive == true).ToListAsync();
 
                 return new Response() { Code = 200, Resource = _mapper.Map<List<MovementDto>>(movements) };
             } catch (Exception ex) {

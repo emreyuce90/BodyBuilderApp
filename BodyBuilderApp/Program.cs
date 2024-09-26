@@ -12,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
 using System.Text;
 
 namespace BodyBuilderApp {
@@ -58,7 +59,7 @@ namespace BodyBuilderApp {
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             builder.Services.AddDbContext<BodyBuilderContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("dockerDB")));
+    options.UseSqlServer(configuration.GetConnectionString("remoteDb")));
 
 
             builder.Services.AddControllers()
@@ -85,6 +86,9 @@ namespace BodyBuilderApp {
                     License = new OpenApiLicense { Name = "Emre Yüce Licence", Url = new Uri("https://www.linkedin.com/in/mreyuce/") }
 
                 });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
@@ -115,11 +119,11 @@ namespace BodyBuilderApp {
 
             });
 
-            builder.Services.AddStackExchangeRedisCache(opt =>
-            {
-                //opt.Configuration = "redisService:6379";
-                opt.Configuration = "172.19.165.27:6379";
-            });
+            //builder.Services.AddStackExchangeRedisCache(opt =>
+            //{
+            //    //opt.Configuration = "redisService:6379";
+            //    opt.Configuration = "172.19.165.27:6379";
+            //});
 
 
             builder.Services.AddInfraDependencies();

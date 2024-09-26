@@ -13,6 +13,7 @@ namespace BodyBuilder.Application.Interfaces {
         Task<Response> GetByUserIdAsync(Guid userId);
         Task<Response> AddAsync(ProgrammeAddDto programmeAddDto);
         Task<Response> CreateCustomWorkoutAsync(Guid userId, CreateCustomProgramme customProgramme);
+        Task<Response> DeleteProgrammeAsync(Guid programmeId);
 
     }
 }
