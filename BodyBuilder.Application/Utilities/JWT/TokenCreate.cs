@@ -22,7 +22,7 @@ namespace BodyBuilder.Application.Utilities.JWT {
 
         public AccessToken CreateToken(User user) {
 
-            var tokenExpireDate = DateTime.UtcNow.AddSeconds(Convert.ToInt32(_configuration["TokenOptions:AccessTokenExpiration"]));
+            var tokenExpireDate = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["TokenOptions:AccessTokenExpiration"]));
             var refreshTokenExpireDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["TokenOptions:ExpireRefresh"]));
             SymmetricSecurityKey symmetric = new(Encoding.UTF8.GetBytes(_configuration["TokenOptions:SecurityKey"]));
             SigningCredentials credentials = new SigningCredentials(symmetric, SecurityAlgorithms.HmacSha256);

@@ -2,10 +2,13 @@
 using BodyBuilder.Application.Dtos.User;
 using BodyBuilder.Application.Interfaces;
 using BodyBuilderApp.Communication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BodyBuilderApp.Controllers {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class MovementsController : ControllerBase {

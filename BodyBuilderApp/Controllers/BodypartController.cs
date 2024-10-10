@@ -3,10 +3,13 @@ using BodyBuilder.Application.Dtos.Movement;
 using BodyBuilder.Application.Interfaces;
 using BodyBuilder.Application.Services;
 using BodyBuilderApp.Communication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BodyBuilderApp.Controllers {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class BodypartController : ControllerBase {

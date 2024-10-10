@@ -77,7 +77,7 @@ namespace BodyBuilder.Application.Services {
                     Id = user.Id,
                     RoleName = user.Roles.Select(r => r.RoleName).ToList(),
                     Token = accessToken.Token,
-
+                    RefreshToken= refreshToken?.Code
                 };
                 return new Response {
                     Success = true,
@@ -111,7 +111,8 @@ namespace BodyBuilder.Application.Services {
                 Email = user.Email,
                 Token = accessToken.Token,
                 Id = user.Id,
-                RoleName = user.Roles.Select(r => r.RoleName).ToList()
+                RoleName = user.Roles.Select(r => r.RoleName).ToList(),
+                RefreshToken = accessToken.RefreshToken,
             };
             return new Response<UserResource>(userResource);
         }

@@ -142,7 +142,6 @@ namespace BodyBuilder.Application.Services {
 
                 var workoutCount = await _workoutRepository.Table.CountAsync(w => w.IsActive == true && w.IsDeleted == false && w.UserId == userId);
 
-                
 
                 return new Response(workoutCount);
             } catch (Exception ex) {

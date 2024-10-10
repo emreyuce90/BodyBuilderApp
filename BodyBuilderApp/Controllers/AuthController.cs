@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 namespace BodyBuilderApp.Controllers {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController : ControllerBase {
+    public partial class AuthController : ControllerBase {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
         public AuthController(IAuthService authService, IMapper mapper) {
@@ -42,16 +42,16 @@ namespace BodyBuilderApp.Controllers {
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(typeof(Response<UserResource>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateTokenByRefreshToken() {
-            var refreshToken = Request.Cookies["refreshToken"];
-            if (string.IsNullOrEmpty(refreshToken)) {
+        public async Task<IActionResult> CreateTokenByRefreshToken([FromBody] RefreshTokenRequest refreshTokenRequest) {
+            //var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshTokenRequest.RefreshToken)) {
                 // refreshToken bulunamazsa veya boşsa, hata işlemleri yapabilirsiniz
                 return BadRequest("Invalid or missing refresh token.");
             }
-            var response = await _authService.CreateTokenByRefreshToken(refreshToken);
+            var response = await _authService.CreateTokenByRefreshToken(refreshTokenRequest.RefreshToken);
             if (!response.Success) return BadRequest(response);
             return Ok(response);
         }
