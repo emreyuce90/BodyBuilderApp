@@ -23,14 +23,16 @@ namespace BodyBuilder.Application.Services {
         private readonly IMapper _mapper;
         private readonly IValidator<UserLoginDto> _validator;
         private readonly IValidator<UserAddDto> _userRegisterValidator;
+        private readonly IRoleRepository _roleRepository;
 
-        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator) {
+        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator, IRoleRepository roleRepository) {
             _userRepository = userRepository;
             _tokenCreate = tokenCreate;
             _mapper = mapper;
             _userRefreshToken = userRefreshToken;
             _validator = validator;
             _userRegisterValidator = userRegisterValidator;
+            _roleRepository = roleRepository;
         }
 
         public async Task<Response> CleanRefreshToken(string refreshToken) {
@@ -52,7 +54,7 @@ namespace BodyBuilder.Application.Services {
                 return new Response() { Message = message, Success = false };
             }
             //check user existence
-            var user = await _userRepository.Table.Include(r => r.Roles).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            var user = await _userRepository.Table.Include(r => r.Role).FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
             if (user == null) return new Response("Böyle bir kullanıcı bulunamadı");
             //Eğer user var ise ve silinmemiş ise
             if (user != null && !user.IsDeleted) {
@@ -75,9 +77,11 @@ namespace BodyBuilder.Application.Services {
                 var userResource = new UserResource {
                     Email = user.Email,
                     Id = user.Id,
-                    RoleName = user.Roles.Select(r => r.RoleName).ToList(),
+                    RoleName = user.Role.RoleName,
                     Token = accessToken.Token,
-                    RefreshToken= refreshToken?.Code
+                    RefreshToken= refreshToken?.Code,
+                    LastName = user.LastName,
+                    FirstName = user.FirstName,
                 };
                 return new Response {
                     Success = true,
@@ -90,16 +94,11 @@ namespace BodyBuilder.Application.Services {
         }
 
         public async Task<Response> CreateTokenByRefreshToken(string refreshToken) {
-            //refresh token var mı ,ve süresi geçmiş mi
-
-            //5.02.2024 21:46:07.3196964 datetime
-            //3.02.2024 21:46:07.3196964 refresh
-
             var existRefreshToken = await _userRefreshToken.GetSingle(rt => rt.Code == refreshToken);
             if (existRefreshToken?.Expiration.Date <= DateTime.Now.Date) return new Response("Refresh token süresi bitmiş");
             if (existRefreshToken == null) return new Response("Refresh token bulunamadı");
 
-            var user = await _userRepository.Table.Include(u => u.Roles).FirstOrDefaultAsync(x => x.Id == existRefreshToken.UserId);
+            var user = await _userRepository.Table.Include(u => u.Role).FirstOrDefaultAsync(x => x.Id == existRefreshToken.UserId);
             if (user == null) return new Response("Kullanıcı  bulunamadı");
 
             var accessToken = _tokenCreate.CreateToken(user);
@@ -111,8 +110,9 @@ namespace BodyBuilder.Application.Services {
                 Email = user.Email,
                 Token = accessToken.Token,
                 Id = user.Id,
-                RoleName = user.Roles.Select(r => r.RoleName).ToList(),
+                RoleName = user.Role.RoleName,
                 RefreshToken = accessToken.RefreshToken,
+                
             };
             return new Response<UserResource>(userResource);
         }
@@ -136,10 +136,16 @@ namespace BodyBuilder.Application.Services {
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userAddDto.Password, out passwordHash, out passwordSalt);
             //user informations
+
+            //TODO: Get all roles and select one
+            var rolesInDb = await _roleRepository.GetAllAsync(r => r.IsActive && !r.IsDeleted).ToListAsync();
             User user = new() {
+                FirstName = userAddDto.FirstName,
+                LastName = userAddDto.LastName,
+                RegistrationDate = userAddDto.RegistrationDate,
+                EndDate = userAddDto.EndDate,
                 CreatedDate = DateTime.Now,
                 PhoneNumber = userAddDto.PhoneNumber,
-                Gender = userAddDto.Gender,
                 DateOfBirth = userAddDto.DateOfBirth,
                 Email = userAddDto.Email,
                 IsActive = true,
@@ -147,13 +153,11 @@ namespace BodyBuilder.Application.Services {
                 MailConfirmValue = Guid.NewGuid().ToString(),
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Roles = new List<Role>() { new Role() { RoleName = "Admin" } }
+                RoleId = rolesInDb.FirstOrDefault(r => r.RoleName == "User").Id
             };
 
             await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
-
-            // user metric registration
             
             return new Response<UserDto>(_mapper.Map<UserDto>(user));
 

@@ -7,6 +7,5 @@ using System.Threading.Tasks;
 namespace BodyBuilder.Domain.Entities {
     public class Role:BaseEntity {
         public string RoleName { get; set; }
-        public User User { get; set; }
     }
 }

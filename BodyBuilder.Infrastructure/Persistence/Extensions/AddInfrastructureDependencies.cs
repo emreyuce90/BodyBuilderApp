@@ -24,6 +24,7 @@ namespace BodyBuilder.Infrastructure.Persistence.Extensions {
             services.AddScoped<IWorkoutMovementSetRepository,EfWorkoutMovementSetRepository>();
             services.AddScoped<IMetricsRepository, EfMetricsRepository>();
             services.AddScoped<IBodyMetrics,EfBodyMetrics>();
+            services.AddScoped<IRoleRepository, EfRoleRepository>();
         }
     }
 }

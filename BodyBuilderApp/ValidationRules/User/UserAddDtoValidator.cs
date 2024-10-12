@@ -23,22 +23,14 @@ namespace BodyBuilder.Application.ValidationRules.User {
                 .NotEmpty()
                 .WithMessage("Şifre alanı boş geçilemez");
 
-            RuleFor(u => u.PasswordConfirm)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage("Şifre tekrar alanı boş geçilemez")
-                .Equal(x => x.Password)
-                .WithMessage("Şifre ve şifre tekrar alanı aynı olmalıdır");
+           
 
             RuleFor(u => u.PhoneNumber)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("Telefon numarası alanı boş geçilemez");
 
-            RuleFor(u => u.Gender)
-                .NotEmpty()
-                .WithMessage("Cinsiyet alanı boş geçilemez");
-
+          
             RuleFor(u => u.DateOfBirth)
                 .NotNull()
                 .NotEmpty()

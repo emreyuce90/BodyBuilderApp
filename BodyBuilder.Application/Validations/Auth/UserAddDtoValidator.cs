@@ -36,12 +36,24 @@ namespace BodyBuilder.Application.Validations.Auth {
                 .Matches("[^a-zA-Z0-9]").WithMessage("Parola en az bir özel karakter içermelidir.");
                 ;
 
-            RuleFor(u => u.PasswordConfirm)
+            RuleFor(u => u.FirstName)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage("Şifre tekrar alanı boş geçilemez")
-                .Equal(x => x.Password)
-                .WithMessage("Şifre ve şifre tekrar alanı aynı olmalıdır");
+                .WithMessage("Ad alanı boş geçilemez");
+            RuleFor(u => u.LastName)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Ad alanı boş geçilemez");
+            
+            RuleFor(u => u.RegistrationDate)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Ad alanı boş geçilemez");
+
+            RuleFor(u => u.EndDate)
+           .NotNull()
+           .NotEmpty()
+           .WithMessage("Ad alanı boş geçilemez");
         }
     }
 }
