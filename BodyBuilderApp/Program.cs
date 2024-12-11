@@ -12,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 using System.Reflection;
 using System.Text;
 
@@ -20,7 +21,23 @@ namespace BodyBuilderApp {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            #region Serilog
+            // Serilog'u enrichers ile yapılandırıyoruz
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.WithEnvironmentName()          // Ortam (development, production vs.) bilgisi
+                .Enrich.WithMachineName()              // Makine adı
+                .Enrich.WithProcessId()                // İşlem ID'si
+                .Enrich.WithProcessName()              // İşlem adı
+                .Enrich.WithThreadId()                 // Thread ID'si
+                .Enrich.WithThreadName()               // Thread adı
+                .WriteTo.Console()                     // Logları console'a yaz
+                .WriteTo.File("logs/logfile.txt", rollingInterval: RollingInterval.Day)  // Günlük dosyalara yaz
+                .WriteTo.Seq("http://172.19.165.27:5341")  // Seq'e gönder
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
+            #endregion
 
             #region Cors Policy
             builder.Services.AddCors(options => {
@@ -33,7 +50,6 @@ namespace BodyBuilderApp {
                     });
             });
             #endregion
-
 
             #region Jwt
             var token = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
