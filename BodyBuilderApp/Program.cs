@@ -5,6 +5,7 @@ using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Context;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using BodyBuilderApp.Extensions;
+using BodyBuilderApp.OpenTelemetry;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,12 @@ namespace BodyBuilderApp {
             });
 
             #endregion
+
+
+            #region OpenTelemetry
+            builder.Services.AddOpenTelemetryExt(builder.Configuration);
+            #endregion
+
 
             //appsettings.json dosyas?n?n yap?land?rmas?n? yükler
             var configuration = builder.Configuration;
@@ -167,6 +174,8 @@ namespace BodyBuilderApp {
                     c.RoutePrefix = string.Empty; // Ana sayfada Swagger UI'yı göstermek için
                 });
             }
+
+            app.UseMiddleware<RequestAndResponseTelemetryMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
