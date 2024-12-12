@@ -15,6 +15,19 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  seqService:
+   image: datalust/seq:latest
+   container_name: c_seq
+   restart: unless-stopped
+   environment:
+      ACCEPT_EULA: Y
+      SEQ_API_CANONICALURI: https://seq.example.com
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: "$PH"  # Replace with your actual password hash
+   volumes:
+      - /path/to/seq/data:/data  # Adjust the path as needed
+   ports:
+      - "5342:80"
+
   redisService:
     image: redis
     container_name: redis_container
@@ -28,3 +41,41 @@ services:
     - "4317:4317" #grpc
     - "4318:4318" #http
     - "16686:16686"  #ui
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    expose:
+      - 9200
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=DkIedPPSCb
+    networks:
+      - es-net
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    expose:
+      - 5601
+    networks:
+      - es-net
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+networks:
+  es-net:
+    driver: bridge
+volumes:
+  elasticsearch-data:
+    driver: local
+  kibana-data:
+    driver: local

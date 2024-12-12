@@ -9,11 +9,16 @@ using BodyBuilderApp.OpenTelemetry;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Serilog;
+using Serilog.Exceptions;
+using Serilog.Formatting.Elasticsearch;
+using Serilog.Sinks.Elasticsearch;
 using System.Reflection;
 using System.Text;
 
@@ -21,11 +26,20 @@ namespace BodyBuilderApp {
     public class Program {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
+            //builder.Services.AddElasticExt();
+            builder.Services.Configure<ElasticSearchSettings>(builder.Configuration.GetSection(nameof(ElasticSearchSettings)));
+
+            var elasticConfigration = builder.Configuration
+     .GetSection(nameof(ElasticSearchSettings))
+     .Get<ElasticSearchSettings>();
 
             #region Serilog
             // Serilog'u enrichers ile yapılandırıyoruz
             Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()          //Hata detayları
                 .Enrich.WithEnvironmentName()          // Ortam (development, production vs.) bilgisi
+                .Enrich.WithProperty("Appname",builder.Environment.EnvironmentName)
                 .Enrich.WithMachineName()              // Makine adı
                 .Enrich.WithProcessId()                // İşlem ID'si
                 .Enrich.WithProcessName()              // İşlem adı
@@ -33,7 +47,19 @@ namespace BodyBuilderApp {
                 .Enrich.WithThreadName()               // Thread adı
                 .WriteTo.Console()                     // Logları console'a yaz
                 .WriteTo.File("logs/logfile.txt", rollingInterval: RollingInterval.Day)  // Günlük dosyalara yaz
-                .WriteTo.Seq("http://172.19.165.27:5341")  // Seq'e gönder
+                .WriteTo.Seq("http://172.19.165.27:5342")  // Seq'e gönder
+                .WriteTo.Elasticsearch(new(new Uri(elasticConfigration!.BaseUrl)) {
+                    AutoRegisterTemplate= true,
+                    OverwriteTemplate = true,
+                    TemplateName = "bodybuilderapp",
+                    AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                    IndexFormat=$"{elasticConfigration.IndexName}-{builder.Environment.EnvironmentName}-log-"+ "{0:yyy.MM.dd}",
+                    TypeName=null,
+                    BatchAction=ElasticOpType.Create,
+                    ModifyConnectionSettings = x=>x.BasicAuthentication(elasticConfigration.UserName,elasticConfigration.Password),
+                    CustomFormatter = new ElasticsearchJsonFormatter(),
+                    
+                })
                 .CreateLogger();
 
             builder.Host.UseSerilog();
