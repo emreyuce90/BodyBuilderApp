@@ -5,6 +5,7 @@ using BodyBuilder.Application.ValidationRules.User;
 using BodyBuilder.Infrastructure.Persistence.Context;
 using BodyBuilder.Infrastructure.Persistence.Extensions;
 using BodyBuilderApp.Extensions;
+using BodyBuilderApp.Middlewares;
 using BodyBuilderApp.OpenTelemetry;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -201,7 +202,7 @@ namespace BodyBuilderApp {
                     c.RoutePrefix = string.Empty; // Ana sayfada Swagger UI'yı göstermek için
                 });
             }
-
+            app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
             app.UseMiddleware<RequestAndResponseTelemetryMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();

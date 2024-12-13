@@ -9,6 +9,7 @@ using BodyBuilderApp.Communication;
 using BodyBuilderApp.Resources;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +25,9 @@ namespace BodyBuilder.Application.Services {
         private readonly IValidator<UserLoginDto> _validator;
         private readonly IValidator<UserAddDto> _userRegisterValidator;
         private readonly IRoleRepository _roleRepository;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator, IRoleRepository roleRepository) {
+        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator, IRoleRepository roleRepository, ILogger<AuthService> logger) {
             _userRepository = userRepository;
             _tokenCreate = tokenCreate;
             _mapper = mapper;
@@ -33,6 +35,7 @@ namespace BodyBuilder.Application.Services {
             _validator = validator;
             _userRegisterValidator = userRegisterValidator;
             _roleRepository = roleRepository;
+            _logger = logger;
         }
 
         public async Task<Response> CleanRefreshToken(string refreshToken) {
@@ -138,7 +141,7 @@ namespace BodyBuilder.Application.Services {
             //user informations
 
             //TODO: Get all roles and select one
-            var rolesInDb = await _roleRepository.GetAllAsync(r => r.IsActive && !r.IsDeleted).ToListAsync();
+            var rolesInDb = (await _roleRepository.GetAllAsync(r => r.IsActive && !r.IsDeleted).ToListAsync())!;
             User user = new() {
                 FirstName = userAddDto.FirstName,
                 LastName = userAddDto.LastName,
@@ -153,11 +156,12 @@ namespace BodyBuilder.Application.Services {
                 MailConfirmValue = Guid.NewGuid().ToString(),
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                RoleId = rolesInDb.FirstOrDefault(r => r.RoleName == "User").Id
+                RoleId = rolesInDb.First(r => r.RoleName == "User").Id
             };
 
             await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
+            _logger.LogInformation("Registering user process implemented. The user registered successfully with this address {@email}", user.Email); //Parametreyi bu şekilde verdiğimizde elasticsearch bu userId yi indexler
             
             return new Response<UserDto>(_mapper.Map<UserDto>(user));
 

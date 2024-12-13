@@ -6,6 +6,7 @@ using BodyBuilder.Domain.Interfaces;
 using BodyBuilderApp.Communication;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,14 @@ namespace BodyBuilder.Application.Services {
         private readonly IMapper _mapper;
         private readonly IValidator<BodyPartAddDto> _validator;
         private readonly IValidator<BodyPartUpdateDto> _updatevalidator;
+        private readonly ILogger<BodyPartService> _logger;
 
-        public BodyPartService(IBodyPartRepository bodyPartRepository, IMapper mapper, IValidator<BodyPartAddDto> validator, IValidator<BodyPartUpdateDto> updatevalidator) {
+        public BodyPartService(IBodyPartRepository bodyPartRepository, IMapper mapper, IValidator<BodyPartAddDto> validator, IValidator<BodyPartUpdateDto> updatevalidator, ILogger<BodyPartService> logger) {
             _bodyPartRepository = bodyPartRepository;
             _mapper = mapper;
             _validator = validator;
             _updatevalidator = updatevalidator;
+            _logger = logger;
         }
 
         public async Task<Response> AddAsync(BodyPartAddDto bodyPartAddDto) {
