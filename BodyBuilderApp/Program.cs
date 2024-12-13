@@ -36,6 +36,7 @@ namespace BodyBuilderApp {
             #region Serilog
             // Serilog'u enrichers ile yapılandırıyoruz
             Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()          //Hata detayları
                 .Enrich.WithEnvironmentName()          // Ortam (development, production vs.) bilgisi
