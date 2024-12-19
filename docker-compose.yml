@@ -71,11 +71,28 @@ services:
       - 5601:5601
     volumes:
       - kibana-data:/usr/share/kibana/data
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: c_rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  
+
 networks:
   es-net:
     driver: bridge
+
 volumes:
   elasticsearch-data:
     driver: local
   kibana-data:
     driver: local
+  rabbitmq_data:
+
+
+

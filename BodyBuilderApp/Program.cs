@@ -22,6 +22,7 @@ using Serilog.Formatting.Elasticsearch;
 using Serilog.Sinks.Elasticsearch;
 using System.Reflection;
 using System.Text;
+using BodyBuilder.Infrastructure.Infrastructure.RabbitMq;
 
 namespace BodyBuilderApp {
     public class Program {
@@ -103,6 +104,16 @@ namespace BodyBuilderApp {
             builder.Services.AddOpenTelemetryExt(builder.Configuration);
             #endregion
 
+            #region Rabbit MQ
+            //rabbit mq ayarları ioptions pattern ile sisteme eklendi
+            builder.Services.AddOptions<RabbitMqSettings>().BindConfiguration(nameof(RabbitMqSettings)).ValidateDataAnnotations();
+            builder.Services.AddSingleton<RabbitMqSettings>(sp => {
+                return sp.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+            });
+            
+            builder.Services.AddRabbitMqExt();
+           
+            #endregion
 
             //appsettings.json dosyas?n?n yap?land?rmas?n? yükler
             var configuration = builder.Configuration;

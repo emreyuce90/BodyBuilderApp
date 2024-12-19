@@ -5,6 +5,7 @@ using BodyBuilder.Application.Utilities.JWT;
 using BodyBuilder.Domain.Entities;
 using BodyBuilder.Domain.Interfaces;
 using BodyBuilder.Domain.Utilities;
+using BodyBuilder.Infrastructure.Infrastructure.RabbitMq;
 using BodyBuilderApp.Communication;
 using BodyBuilderApp.Resources;
 using FluentValidation;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace BodyBuilder.Application.Services {
     public class AuthService : IAuthService {
+
         private readonly IUserRepository _userRepository;
         private readonly ITokenCreate _tokenCreate;
         private readonly IUserRefreshToken _userRefreshToken;
@@ -26,8 +28,9 @@ namespace BodyBuilder.Application.Services {
         private readonly IValidator<UserAddDto> _userRegisterValidator;
         private readonly IRoleRepository _roleRepository;
         private readonly ILogger<AuthService> _logger;
-
-        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator, IRoleRepository roleRepository, ILogger<AuthService> logger) {
+        private readonly IMessageBus _messageBus;
+        private readonly RabbitMqSettings _rabbitMqSettings;
+        public AuthService(IUserRepository userRepository, ITokenCreate tokenCreate, IMapper mapper, IUserRefreshToken userRefreshToken, IValidator<UserLoginDto> validator, IValidator<UserAddDto> userRegisterValidator, IRoleRepository roleRepository, ILogger<AuthService> logger, IMessageBus messageBus, RabbitMqSettings rabbitMqSettings) {
             _userRepository = userRepository;
             _tokenCreate = tokenCreate;
             _mapper = mapper;
@@ -36,6 +39,8 @@ namespace BodyBuilder.Application.Services {
             _userRegisterValidator = userRegisterValidator;
             _roleRepository = roleRepository;
             _logger = logger;
+            _messageBus = messageBus;
+            _rabbitMqSettings = rabbitMqSettings;
         }
 
         public async Task<Response> CleanRefreshToken(string refreshToken) {
@@ -162,7 +167,7 @@ namespace BodyBuilder.Application.Services {
             await _userRepository.CreateAsync(user);
             await _userRepository.SaveAsync();
             _logger.LogInformation("Registering user process implemented. The user registered successfully with this address {@email}", user.Email); //Parametreyi bu şekilde verdiğimizde elasticsearch bu userId yi indexler
-            
+           await _messageBus.PublishAsync(user.Email, _rabbitMqSettings.QueueName);
             return new Response<UserDto>(_mapper.Map<UserDto>(user));
 
         }
