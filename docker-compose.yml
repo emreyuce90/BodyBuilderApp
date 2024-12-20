@@ -28,11 +28,28 @@ services:
    ports:
       - "5342:80"
 
-  redisService:
-    image: redis
-    container_name: redis_container
-    ports:
-      - "6379:6379"
+  redis.db:
+        restart: always
+        image: redis:7.0-alpine
+        container_name : redis.db.container
+        command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--bind", "0.0.0.0"]
+        ports:
+            - "6379:6379"
+        volumes:
+        - redis.db.volume:/data
+
+  redis-db-ui:
+         restart: always
+         image: rediscommander/redis-commander:latest
+         container_name: redis-commander-ui
+         ports:
+             - "27033:8081"
+         environment:
+            REDIS_HOST: redis.db
+            REDIS_PORT: 6379
+            REDIS_PASSWORD: ${REDIS_PASSWORD}
+            HTTP_USER: ${REDIS_UI_USERNAME}
+            HTTP_PASSWORD: ${REDIS_UI_PASSWORD}
   
   jaeger:
    image: jaegertracing/all-in-one:1.49
@@ -93,6 +110,7 @@ volumes:
   kibana-data:
     driver: local
   rabbitmq_data:
+  redis.db.volume:
 
 
 

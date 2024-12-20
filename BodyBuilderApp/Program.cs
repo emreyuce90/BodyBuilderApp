@@ -181,11 +181,9 @@ namespace BodyBuilderApp {
 
             });
 
-            //builder.Services.AddStackExchangeRedisCache(opt =>
-            //{
-            //    //opt.Configuration = "redisService:6379";
-            //    opt.Configuration = "172.19.165.27:6379";
-            //});
+            builder.Services.AddStackExchangeRedisCache(options => {
+                options.Configuration = "172.19.165.27:6379,password=Redis123*";
+            });
 
 
             builder.Services.AddInfraDependencies();
